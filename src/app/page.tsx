@@ -4,6 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from "next/link"
 import { signIn } from "../../lib/auth"
+import { RateLimiter } from "../../lib/validation"
+
+// Create rate limiter instance for login
+const loginRateLimiter = new RateLimiter(5, 900000) // 5 attempts per 15 minutes
 
 export default function LoginPage() {
   const router = useRouter()
@@ -18,17 +22,29 @@ export default function LoginPage() {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value.trim()
     }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    
+    // Check rate limiting
+    const clientIdentifier = formData.email || 'unknown'
+    if (!loginRateLimiter.canAttempt(clientIdentifier)) {
+      const remainingTime = Math.ceil(loginRateLimiter.getRemainingTime(clientIdentifier) / 1000 / 60)
+      setError(`Too many login attempts. Please try again in ${remainingTime} minutes.`)
+      return
+    }
+
     setLoading(true)
     
     try {
-      const { data, error } = await signIn(formData.email, formData.password)
+      // Record attempt for rate limiting
+      loginRateLimiter.recordAttempt(clientIdentifier)
+      
+      const { data, error } = await signIn(formData.email.toLowerCase(), formData.password)
 
       if (error) {
         throw new Error(error.message)

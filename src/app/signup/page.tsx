@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation'
 import Link from "next/link"
 import CompanyDropdown from "../../../components/CompanyDropdown"
 import { signUp } from "../../../lib/auth"
+import { validateEmail, validatePassword, validateName, sanitizeString, RateLimiter } from "../../../lib/validation"
+
+// Create rate limiter instance
+const rateLimiter = new RateLimiter(3, 300000) // 3 attempts per 5 minutes
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -19,13 +23,26 @@ export default function SignUpPage() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
+    
+    // Sanitize input
+    const sanitizedValue = sanitizeString(value)
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: sanitizedValue
     }))
+    
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }))
+    }
   }
 
   const handleCompanyChange = (companyId: string, companyName: string) => {
@@ -34,33 +51,86 @@ export default function SignUpPage() {
       companyId,
       companyName
     }))
+    
+    // Clear company error
+    if (fieldErrors.company) {
+      setFieldErrors(prev => ({
+        ...prev,
+        company: ''
+      }))
+    }
+  }
+
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {}
+
+    // Validate first name
+    const firstNameValidation = validateName(formData.firstName, 'First name')
+    if (!firstNameValidation.isValid) {
+      errors.firstName = firstNameValidation.error!
+    }
+
+    // Validate last name
+    const lastNameValidation = validateName(formData.lastName, 'Last name')
+    if (!lastNameValidation.isValid) {
+      errors.lastName = lastNameValidation.error!
+    }
+
+    // Validate email
+    const emailValidation = validateEmail(formData.email)
+    if (!emailValidation.isValid) {
+      errors.email = emailValidation.error!
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(formData.password)
+    if (!passwordValidation.isValid) {
+      errors.password = passwordValidation.error!
+    }
+
+    // Validate password confirmation
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match'
+    }
+
+    // Validate company selection
+    if (!formData.companyId) {
+      errors.company = 'Please select a company'
+    }
+
+    setFieldErrors(errors)
+    return Object.keys(errors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    
+    // Check rate limiting
+    const clientIdentifier = formData.email || 'unknown'
+    if (!rateLimiter.canAttempt(clientIdentifier)) {
+      const remainingTime = Math.ceil(rateLimiter.getRemainingTime(clientIdentifier) / 1000 / 60)
+      setError(`Too many signup attempts. Please try again in ${remainingTime} minutes.`)
+      return
+    }
+
+    // Validate form
+    if (!validateForm()) {
+      return
+    }
+
     setLoading(true)
     
     try {
-      // Basic validation
-      if (formData.password !== formData.confirmPassword) {
-        throw new Error('Passwords do not match')
-      }
-
-      if (!formData.companyId) {
-        throw new Error('Please select a company')
-      }
-
-      if (formData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters long')
-      }
+      // Record attempt for rate limiting
+      rateLimiter.recordAttempt(clientIdentifier)
 
       // Create account with Supabase
       const { data, error } = await signUp({
-        email: formData.email,
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
         companyId: formData.companyId,
       })
 
@@ -123,9 +193,12 @@ export default function SignUpPage() {
                 value={formData.firstName}
                 onChange={handleInputChange}
                 disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className={`w-full px-4 py-3 border ${fieldErrors.firstName ? 'border-red-300' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 placeholder="First name"
               />
+              {fieldErrors.firstName && (
+                <p className="text-red-600 text-xs mt-1">{fieldErrors.firstName}</p>
+              )}
             </div>
             <div>
               <label htmlFor="lastName" className="block text-base font-medium text-gray-700 mb-1">
@@ -140,9 +213,12 @@ export default function SignUpPage() {
                 value={formData.lastName}
                 onChange={handleInputChange}
                 disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className={`w-full px-4 py-3 border ${fieldErrors.lastName ? 'border-red-300' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 placeholder="Last name"
               />
+              {fieldErrors.lastName && (
+                <p className="text-red-600 text-xs mt-1">{fieldErrors.lastName}</p>
+              )}
             </div>
           </div>
 
@@ -154,8 +230,11 @@ export default function SignUpPage() {
               value={formData.companyId}
               onChange={handleCompanyChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className={`w-full px-4 py-3 border ${fieldErrors.company ? 'border-red-300' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed`}
             />
+            {fieldErrors.company && (
+              <p className="text-red-600 text-xs mt-1">{fieldErrors.company}</p>
+            )}
           </div>
 
           <div>
@@ -171,9 +250,12 @@ export default function SignUpPage() {
               value={formData.email}
               onChange={handleInputChange}
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className={`w-full px-4 py-3 border ${fieldErrors.email ? 'border-red-300' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed`}
               placeholder="Enter your email"
             />
+            {fieldErrors.email && (
+              <p className="text-red-600 text-xs mt-1">{fieldErrors.email}</p>
+            )}
           </div>
 
           <div>
@@ -189,10 +271,14 @@ export default function SignUpPage() {
               value={formData.password}
               onChange={handleInputChange}
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className={`w-full px-4 py-3 border ${fieldErrors.password ? 'border-red-300' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed`}
               placeholder="Create a password"
             />
-            <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
+            {fieldErrors.password ? (
+              <p className="text-red-600 text-xs mt-1">{fieldErrors.password}</p>
+            ) : (
+              <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters with letters and numbers</p>
+            )}
           </div>
 
           <div>
@@ -208,9 +294,12 @@ export default function SignUpPage() {
               value={formData.confirmPassword}
               onChange={handleInputChange}
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className={`w-full px-4 py-3 border ${fieldErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-transparent outline-none transition-colors placeholder:text-gray-500 placeholder:text-sm text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed`}
               placeholder="Confirm your password"
             />
+            {fieldErrors.confirmPassword && (
+              <p className="text-red-600 text-xs mt-1">{fieldErrors.confirmPassword}</p>
+            )}
           </div>
 
           <button
