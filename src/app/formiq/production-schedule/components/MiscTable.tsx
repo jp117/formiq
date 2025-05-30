@@ -3,38 +3,10 @@
 import { useState } from 'react'
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import EditItemModal from './EditItemModal'
+import EditMiscModal from './modals/EditMiscModal'
 import AddPOModal from './AddPOModal'
 import EditPOModal from './EditPOModal'
-
-interface Component {
-  id: string
-  component_name: string
-  quantity: number
-  original_scheduled_ship_date: string
-  current_scheduled_ship_date: string
-}
-
-interface PurchaseOrder {
-  id: string
-  po_number: string
-  vendor?: string
-  components: Component[]
-}
-
-interface MiscItem {
-  id: string
-  quantity: number
-  description: string
-  sales_order_number: string
-  customer: string
-  job_name?: string
-  job_address?: string
-  completed: boolean
-  original_scheduled_ship_date: string
-  current_scheduled_ship_date: string
-  purchase_orders: PurchaseOrder[]
-}
+import { MiscItem, PurchaseOrder } from '../types'
 
 interface MiscTableProps {
   miscItems: MiscItem[]
@@ -106,9 +78,9 @@ export default function MiscTable({ miscItems, userAccess, companyId }: MiscTabl
     router.refresh()
   }
 
-  const handleAddPO = (e: React.MouseEvent, miscId: string) => {
+  const handleAddPO = (e: React.MouseEvent, miscItemId: string) => {
     e.stopPropagation()
-    setSelectedItemForPO(miscId)
+    setSelectedItemForPO(miscItemId)
     setAddPOModalOpen(true)
   }
 
@@ -284,7 +256,7 @@ export default function MiscTable({ miscItems, userAccess, companyId }: MiscTabl
                                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                                           {formatDate(component.original_scheduled_ship_date)}
                                         </td>
-                                        <td className={`px-3 py-2 whitespace-nowrap text-sm rounded ${getShipDateColorClass(component.original_scheduled_ship_date, component.current_scheduled_ship_date)}`}>
+                                        <td className={`px-3 py-2 whitespace-nowrap text-sm ${getShipDateColorClass(component.original_scheduled_ship_date, component.current_scheduled_ship_date)}`}>
                                           {formatDate(component.current_scheduled_ship_date)}
                                         </td>
                                       </tr>
@@ -306,11 +278,10 @@ export default function MiscTable({ miscItems, userAccess, companyId }: MiscTabl
       </div>
 
       {/* Edit Modal */}
-      <EditItemModal
+      <EditMiscModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        type="misc"
-        item={selectedItem}
+        miscItem={selectedItem}
         userAccess={userAccess}
         onItemUpdated={handleItemUpdated}
       />
@@ -321,8 +292,8 @@ export default function MiscTable({ miscItems, userAccess, companyId }: MiscTabl
         onClose={() => setAddPOModalOpen(false)}
         parentType="misc"
         parentId={selectedItemForPO}
-        onPOAdded={handlePOUpdated}
         companyId={companyId}
+        onPOAdded={handlePOUpdated}
       />
 
       {/* Edit PO Modal */}

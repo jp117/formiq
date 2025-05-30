@@ -5,65 +5,10 @@ import { useRouter } from 'next/navigation'
 import SwitchboardsTable from './SwitchboardsTable'
 import IntegrationTable from './IntegrationTable'
 import MiscTable from './MiscTable'
-import CreateItemModal from './CreateItemModal'
-
-interface Component {
-  id: string
-  component_name: string
-  quantity: number
-  original_scheduled_ship_date: string
-  current_scheduled_ship_date: string
-}
-
-interface PurchaseOrder {
-  id: string
-  po_number: string
-  vendor?: string
-  components: Component[]
-}
-
-interface Switchboard {
-  id: string
-  designation: string
-  nema_type: string
-  number_of_sections: number
-  sales_order_number: string
-  customer: string
-  job_name?: string
-  job_address?: string
-  completed: boolean
-  original_scheduled_ship_date: string
-  current_scheduled_ship_date: string
-  purchase_orders: PurchaseOrder[]
-}
-
-interface Integration {
-  id: string
-  designation: string
-  type: string
-  sales_order_number: string
-  customer: string
-  job_name?: string
-  job_address?: string
-  completed: boolean
-  original_scheduled_ship_date: string
-  current_scheduled_ship_date: string
-  purchase_orders: PurchaseOrder[]
-}
-
-interface MiscItem {
-  id: string
-  quantity: number
-  description: string
-  sales_order_number: string
-  customer: string
-  job_name?: string
-  job_address?: string
-  completed: boolean
-  original_scheduled_ship_date: string
-  current_scheduled_ship_date: string
-  purchase_orders: PurchaseOrder[]
-}
+import CreateSwitchboardModal from './modals/CreateSwitchboardModal'
+import CreateIntegrationModal from './modals/CreateIntegrationModal'
+import CreateMiscModal from './modals/CreateMiscModal'
+import { Switchboard, Integration, MiscItem } from '../types'
 
 interface ProductionScheduleContentProps {
   switchboards: Switchboard[]
@@ -81,7 +26,9 @@ function ProductionScheduleContent({
   userAccess
 }: ProductionScheduleContentProps) {
   const [activeTab, setActiveTab] = useState('switchboards')
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSwitchboardModalOpen, setIsSwitchboardModalOpen] = useState(false)
+  const [isIntegrationModalOpen, setIsIntegrationModalOpen] = useState(false)
+  const [isMiscModalOpen, setIsMiscModalOpen] = useState(false)
   const router = useRouter()
 
   const tabs = [
@@ -91,7 +38,13 @@ function ProductionScheduleContent({
   ]
 
   const handleNewSchedule = () => {
-    setIsModalOpen(true)
+    if (activeTab === 'switchboards') {
+      setIsSwitchboardModalOpen(true)
+    } else if (activeTab === 'integration') {
+      setIsIntegrationModalOpen(true)
+    } else if (activeTab === 'misc') {
+      setIsMiscModalOpen(true)
+    }
   }
 
   const handleItemCreated = () => {
@@ -146,7 +99,7 @@ function ProductionScheduleContent({
               </p>
               {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
                 <button 
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => setIsSwitchboardModalOpen(true)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Create Switchboard
@@ -172,7 +125,7 @@ function ProductionScheduleContent({
               </p>
               {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
                 <button 
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => setIsIntegrationModalOpen(true)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Create Integration
@@ -198,7 +151,7 @@ function ProductionScheduleContent({
               </p>
               {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
                 <button 
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => setIsMiscModalOpen(true)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Create Misc Item
@@ -209,11 +162,24 @@ function ProductionScheduleContent({
         )}
       </div>
 
-      {/* Create Item Modal */}
-      <CreateItemModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        type={activeTab as 'switchboards' | 'integration' | 'misc'}
+      {/* Create Modals */}
+      <CreateSwitchboardModal
+        isOpen={isSwitchboardModalOpen}
+        onClose={() => setIsSwitchboardModalOpen(false)}
+        companyId={companyId}
+        onItemCreated={handleItemCreated}
+      />
+
+      <CreateIntegrationModal
+        isOpen={isIntegrationModalOpen}
+        onClose={() => setIsIntegrationModalOpen(false)}
+        companyId={companyId}
+        onItemCreated={handleItemCreated}
+      />
+
+      <CreateMiscModal
+        isOpen={isMiscModalOpen}
+        onClose={() => setIsMiscModalOpen(false)}
         companyId={companyId}
         onItemCreated={handleItemCreated}
       />

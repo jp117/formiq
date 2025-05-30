@@ -3,39 +3,10 @@
 import { useState } from 'react'
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import EditItemModal from './EditItemModal'
+import EditSwitchboardModal from './modals/EditSwitchboardModal'
 import AddPOModal from './AddPOModal'
 import EditPOModal from './EditPOModal'
-
-interface Component {
-  id: string
-  component_name: string
-  quantity: number
-  original_scheduled_ship_date: string
-  current_scheduled_ship_date: string
-}
-
-interface PurchaseOrder {
-  id: string
-  po_number: string
-  vendor?: string
-  components: Component[]
-}
-
-interface Switchboard {
-  id: string
-  designation: string
-  nema_type: string
-  number_of_sections: number
-  sales_order_number: string
-  customer: string
-  job_name?: string
-  job_address?: string
-  completed: boolean
-  original_scheduled_ship_date: string
-  current_scheduled_ship_date: string
-  purchase_orders: PurchaseOrder[]
-}
+import { Switchboard, PurchaseOrder } from '../types'
 
 interface SwitchboardsTableProps {
   switchboards: Switchboard[]
@@ -294,7 +265,7 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                                           {formatDate(component.original_scheduled_ship_date)}
                                         </td>
-                                        <td className={`px-3 py-2 whitespace-nowrap text-sm rounded ${getShipDateColorClass(component.original_scheduled_ship_date, component.current_scheduled_ship_date)}`}>
+                                        <td className={`px-3 py-2 whitespace-nowrap text-sm ${getShipDateColorClass(component.original_scheduled_ship_date, component.current_scheduled_ship_date)}`}>
                                           {formatDate(component.current_scheduled_ship_date)}
                                         </td>
                                       </tr>
@@ -316,11 +287,10 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
       </div>
 
       {/* Edit Modal */}
-      <EditItemModal
+      <EditSwitchboardModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        type="switchboards"
-        item={selectedItem}
+        switchboard={selectedItem}
         userAccess={userAccess}
         onItemUpdated={handleItemUpdated}
       />
@@ -331,8 +301,8 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
         onClose={() => setAddPOModalOpen(false)}
         parentType="switchboards"
         parentId={selectedItemForPO}
-        onPOAdded={handlePOUpdated}
         companyId={companyId}
+        onPOAdded={handlePOUpdated}
       />
 
       {/* Edit PO Modal */}
