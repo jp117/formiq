@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '../../../lib/supabase-server'
+import Link from 'next/link'
+import Layout from './components/Layout'
 
 export default async function FormIQPage() {
   const supabase = await createServerSupabaseClient()
@@ -26,68 +28,29 @@ export default async function FormIQPage() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="bg-slate-800 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
-                <span className="text-white text-sm font-bold">FIQ</span>
+    <Layout userData={userData}>
+
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Production Schedule Card - Only show if user has access */}
+        {userData?.production_schedule_access && userData.production_schedule_access !== 'no_access' && (
+          <Link href="/formiq/production-schedule" className="block">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer">
+              <div className="flex items-center mb-4">
+                <div className="bg-blue-100 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="ml-3 text-lg font-semibold text-gray-900">Production Schedule</h3>
               </div>
-              <h1 className="ml-3 text-xl font-semibold text-gray-900">FormIQ</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
-                Welcome back, {userData.first_name}!
-              </span>
-              {userData.company && (
-                <span className="text-xs text-gray-500">
-                  {userData.company.company_name}
-                </span>
-              )}
-              <form action="/auth/signout" method="post">
-                <button 
-                  type="submit"
-                  className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  Sign out
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content - Empty for future development */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center py-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Welcome to FormIQ
-          </h2>
-          <p className="text-gray-600">
-            Tools and features will be added here soon.
-          </p>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
-              <p className="text-sm text-gray-600">
-                © 2024 FormIQ. All rights reserved.
+              <p className="text-gray-600 text-sm">
+                Manage and view your production schedules, timelines, and deadlines.
               </p>
             </div>
-            <div className="flex items-center space-x-6">
-              <p className="text-sm text-gray-600">
-                Powered by <span className="font-medium text-gray-900">Atlas Switch</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+          </Link>
+        )}
+      </div>
+    </Layout>
   )
 } 

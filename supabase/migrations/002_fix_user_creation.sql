@@ -47,5 +47,6 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
 -- Add policy for anonymous users to read companies (for the dropdown)
-CREATE POLICY IF NOT EXISTS "Allow anonymous read access to companies" ON companies
+DROP POLICY IF EXISTS "Allow anonymous read access to companies" ON companies;
+CREATE POLICY "Allow anonymous read access to companies" ON companies
   FOR SELECT USING (true); 
