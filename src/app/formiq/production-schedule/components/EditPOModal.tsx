@@ -6,7 +6,10 @@ import { createClient } from '../../../../../lib/supabase'
 interface Component {
   id: string
   component_name: string
+  catalog_number?: string
   quantity: number
+  received: boolean
+  notes?: string
   original_scheduled_ship_date: string
   current_scheduled_ship_date: string
 }
@@ -41,7 +44,10 @@ export default function EditPOModal({
   const [components, setComponents] = useState<Component[]>([])
   const [newComponent, setNewComponent] = useState({
     component_name: '',
+    catalog_number: '',
     quantity: 1,
+    received: false,
+    notes: '',
     original_scheduled_ship_date: '',
     current_scheduled_ship_date: ''
   })
@@ -94,7 +100,10 @@ export default function EditPOModal({
         .from('components')
         .insert([{
           component_name: newComponent.component_name,
+          catalog_number: newComponent.catalog_number,
           quantity: newComponent.quantity,
+          received: newComponent.received,
+          notes: newComponent.notes,
           original_scheduled_ship_date: newComponent.original_scheduled_ship_date,
           current_scheduled_ship_date: newComponent.current_scheduled_ship_date,
           purchase_order_id: purchaseOrder.id
@@ -111,7 +120,10 @@ export default function EditPOModal({
       // Reset component form
       setNewComponent({
         component_name: '',
+        catalog_number: '',
         quantity: 1,
+        received: false,
+        notes: '',
         original_scheduled_ship_date: '',
         current_scheduled_ship_date: ''
       })
@@ -124,7 +136,7 @@ export default function EditPOModal({
     }
   }
 
-  const handleComponentUpdate = async (componentId: string, field: string, value: string) => {
+  const handleComponentUpdate = async (componentId: string, field: string, value: string | boolean) => {
     try {
       const { error } = await supabase
         .from('components')
@@ -242,22 +254,32 @@ export default function EditPOModal({
             {/* Existing Components */}
             <div className="space-y-2 mb-4">
               {components.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 p-2 bg-gray-50 rounded font-medium text-sm text-gray-700">
-                  <div>Component Name</div>
+                <div className="grid grid-cols-1 md:grid-cols-8 gap-2 p-2 bg-gray-50 rounded font-medium text-sm text-gray-700">
+                  <div>Description</div>
+                  <div>Catalog Number</div>
                   <div>Quantity</div>
+                  <div>Received</div>
+                  <div>Notes</div>
                   <div>Original Ship Date</div>
                   <div>Current Ship Date</div>
                   <div>Actions</div>
                 </div>
               )}
               {components.map((component) => (
-                <div key={component.id} className="grid grid-cols-1 md:grid-cols-5 gap-2 p-3 border border-gray-200 rounded-lg">
+                <div key={component.id} className="grid grid-cols-1 md:grid-cols-8 gap-2 p-3 border border-gray-200 rounded-lg">
                   <input
                     type="text"
                     value={component.component_name}
                     onChange={(e) => handleComponentUpdate(component.id, 'component_name', e.target.value)}
                     className="px-2 py-1 border border-gray-300 rounded text-sm text-gray-900 placeholder-gray-500"
-                    placeholder="Component name"
+                    placeholder="Description"
+                  />
+                  <input
+                    type="text"
+                    value={component.catalog_number || ''}
+                    onChange={(e) => handleComponentUpdate(component.id, 'catalog_number', e.target.value)}
+                    className="px-2 py-1 border border-gray-300 rounded text-sm text-gray-900 placeholder-gray-500"
+                    placeholder="Catalog number"
                   />
                   <input
                     type="number"
@@ -266,6 +288,21 @@ export default function EditPOModal({
                     min="1"
                     className="px-2 py-1 border border-gray-300 rounded text-sm text-gray-900 placeholder-gray-500"
                     placeholder="1"
+                  />
+                  <div className="flex items-center justify-center">
+                    <input
+                      type="checkbox"
+                      checked={component.received}
+                      onChange={(e) => handleComponentUpdate(component.id, 'received', e.target.checked)}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    value={component.notes || ''}
+                    onChange={(e) => handleComponentUpdate(component.id, 'notes', e.target.value)}
+                    className="px-2 py-1 border border-gray-300 rounded text-sm text-gray-900 placeholder-gray-500"
+                    placeholder="Notes"
                   />
                   <input
                     type="date"
@@ -297,12 +334,21 @@ export default function EditPOModal({
             {/* Add New Component */}
             <form onSubmit={handleAddComponent} className="border-t pt-4">
               <h5 className="text-sm font-medium text-gray-700 mb-2">Add New Component</h5>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-2">
+              <div className="grid grid-cols-1 md:grid-cols-7 gap-2 mb-2">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Component Name *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Description *</label>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Catalog Number</label>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Quantity *</label>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Received</label>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Notes</label>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -313,14 +359,21 @@ export default function EditPOModal({
                   <label className="block text-xs font-medium text-gray-700 mb-1">Current Ship Date *</label>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
                 <input
                   type="text"
                   value={newComponent.component_name}
                   onChange={(e) => setNewComponent(prev => ({ ...prev, component_name: e.target.value }))}
                   required
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
-                  placeholder="Component name"
+                  placeholder="Description"
+                />
+                <input
+                  type="text"
+                  value={newComponent.catalog_number}
+                  onChange={(e) => setNewComponent(prev => ({ ...prev, catalog_number: e.target.value }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+                  placeholder="Catalog number"
                 />
                 <input
                   type="number"
@@ -330,6 +383,21 @@ export default function EditPOModal({
                   min="1"
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
                   placeholder="1"
+                />
+                <div className="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={newComponent.received}
+                    onChange={(e) => setNewComponent(prev => ({ ...prev, received: e.target.checked }))}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={newComponent.notes}
+                  onChange={(e) => setNewComponent(prev => ({ ...prev, notes: e.target.value }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+                  placeholder="Notes"
                 />
                 <input
                   type="date"

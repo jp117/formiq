@@ -29,6 +29,7 @@ export default function EditSwitchboardModal({
     customer: '',
     job_name: '',
     job_address: '',
+    dwg_rev: '',
     completed: false,
     original_scheduled_ship_date: '',
     current_scheduled_ship_date: ''
@@ -47,6 +48,7 @@ export default function EditSwitchboardModal({
         customer: switchboard.customer,
         job_name: switchboard.job_name || '',
         job_address: switchboard.job_address || '',
+        dwg_rev: switchboard.dwg_rev || '',
         completed: switchboard.completed,
         original_scheduled_ship_date: switchboard.original_scheduled_ship_date,
         current_scheduled_ship_date: switchboard.current_scheduled_ship_date
@@ -71,6 +73,7 @@ export default function EditSwitchboardModal({
           customer: formData.customer,
           job_name: formData.job_name || null,
           job_address: formData.job_address || null,
+          dwg_rev: formData.dwg_rev || null,
           completed: formData.completed,
           original_scheduled_ship_date: formData.original_scheduled_ship_date,
           current_scheduled_ship_date: formData.current_scheduled_ship_date

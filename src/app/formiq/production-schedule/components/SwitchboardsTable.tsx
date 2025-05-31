@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import EditSwitchboardModal from './modals/EditSwitchboardModal'
 import AddPOModal from './AddPOModal'
@@ -94,6 +93,18 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
     )
   }
 
+  // Helper function to check if all components in a PO are received
+  const isPOReady = (po: PurchaseOrder) => {
+    if (!po.components || po.components.length === 0) return false
+    return po.components.every((component) => component.received)
+  }
+
+  // Helper function to check if all POs for an item have all components received
+  const isItemReady = (item: Switchboard) => {
+    if (!item.purchase_orders || item.purchase_orders.length === 0) return false
+    return item.purchase_orders.every((po) => isPOReady(po))
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="px-6 py-4 border-b border-gray-200">
@@ -104,32 +115,35 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
           <thead className="bg-gray-50">
             <tr>
               <th className="w-8 px-6 py-3"></th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Designation
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Sales Order
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Customer
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Job Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 NEMA Type
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Sections
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Dwg Rev
+              </th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Original Ship Date
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Current Ship Date
               </th>
               {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               )}
@@ -164,38 +178,48 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {switchboard.designation}
+                    <div className="flex items-center justify-center gap-2">
+                      {switchboard.designation}
+                      {isItemReady(switchboard) && (
+                        <span className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                          ✓ Matl
+                        </span>
+                      )}
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
                     {switchboard.sales_order_number}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
                     {switchboard.customer}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {switchboard.job_name || '-'}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    {switchboard.job_name || switchboard.job_address || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
                     {switchboard.nema_type}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
                     {switchboard.number_of_sections}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    {switchboard.dwg_rev || '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
                     {formatDate(switchboard.original_scheduled_ship_date)}
                   </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${getShipDateColorClass(switchboard.original_scheduled_ship_date, switchboard.current_scheduled_ship_date)}`}>
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm text-center ${getShipDateColorClass(switchboard.original_scheduled_ship_date, switchboard.current_scheduled_ship_date)}`}>
                     {formatDate(switchboard.current_scheduled_ship_date)}
                   </td>
                   {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
                       <button className="text-blue-600 hover:text-blue-800 mr-2" onClick={(e) => handleEdit(e, switchboard)}>Edit</button>
                     </td>
                   )}
                 </tr>
                 {expandedRows.has(switchboard.id) && (
                   <tr>
-                    <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 10 : 9} className="px-6 py-4 bg-gray-50">
+                    <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 11 : 10} className="px-6 py-4 bg-gray-50">
                       <div className="space-y-4">
                         {switchboard.job_address && (
                           <div>
@@ -222,10 +246,17 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                           return (
                             <div key={po.id} className={`border rounded-lg p-4 ${hasDateIssue ? 'bg-red-50 border-red-200' : 'bg-white border-gray-200'}`}>
                               <div className="flex justify-between items-center mb-2">
-                                <h5 className="text-sm font-medium text-gray-900">
-                                  PO: {po.po_number}
-                                  {po.vendor && <span className="text-gray-600"> - {po.vendor}</span>}
-                                </h5>
+                                <div className="flex items-center gap-2">
+                                  <h5 className="text-sm font-medium text-gray-900">
+                                    PO: {po.po_number}
+                                    {po.vendor && <span className="text-gray-600"> - {po.vendor}</span>}
+                                  </h5>
+                                  {isPOReady(po) && (
+                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                      ✓ Complete
+                                    </span>
+                                  )}
+                                </div>
                                 {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
                                   <button 
                                     onClick={(e) => handleEditPO(e, po)}
@@ -239,33 +270,57 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                                 <table className="min-w-full divide-y divide-gray-200">
                                   <thead className="bg-gray-50">
                                     <tr>
-                                      <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Component
+                                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Description
                                       </th>
-                                      <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Catalog Number
+                                      </th>
+                                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Quantity
                                       </th>
-                                      <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Received
+                                      </th>
+                                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Notes
+                                      </th>
+                                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Original Ship Date
                                       </th>
-                                      <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Current Ship Date
                                       </th>
                                     </tr>
                                   </thead>
-                                  <tbody className="bg-white divide-y divide-gray-200">
-                                    {po.components.map((component) => (
-                                      <tr key={component.id}>
-                                        <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                                  <tbody className="divide-y divide-gray-200">
+                                    {po.components?.map((component) => (
+                                      <tr key={component.id} className="hover:bg-gray-50">
+                                        <td className="px-3 py-2 text-sm text-gray-900 text-center">
                                           {component.component_name}
                                         </td>
-                                        <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                                        <td className="px-3 py-2 text-sm text-gray-900 text-center">
+                                          {component.catalog_number || '-'}
+                                        </td>
+                                        <td className="px-3 py-2 text-sm text-gray-900 text-center">
                                           {component.quantity}
                                         </td>
-                                        <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                                        <td className="px-3 py-2 text-sm text-center">
+                                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                                            component.received 
+                                              ? 'bg-green-100 text-green-800' 
+                                              : 'bg-red-100 text-red-800'
+                                          }`}>
+                                            {component.received ? 'Received' : 'Pending'}
+                                          </span>
+                                        </td>
+                                        <td className="px-3 py-2 text-sm text-gray-900 text-center">
+                                          {component.notes || '-'}
+                                        </td>
+                                        <td className="px-3 py-2 text-sm text-gray-500 text-center">
                                           {formatDate(component.original_scheduled_ship_date)}
                                         </td>
-                                        <td className={`px-3 py-2 whitespace-nowrap text-sm ${getShipDateColorClass(component.original_scheduled_ship_date, component.current_scheduled_ship_date)}`}>
+                                        <td className={`px-3 py-2 text-sm text-center ${getShipDateColorClass(component.original_scheduled_ship_date, component.current_scheduled_ship_date)}`}>
                                           {formatDate(component.current_scheduled_ship_date)}
                                         </td>
                                       </tr>

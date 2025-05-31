@@ -1,7 +1,10 @@
 export interface Component {
   id: string
   component_name: string
+  catalog_number?: string
   quantity: number
+  received: boolean
+  notes?: string
   original_scheduled_ship_date: string
   current_scheduled_ship_date: string
 }
@@ -19,6 +22,7 @@ export interface BaseItem {
   customer: string
   job_name?: string
   job_address?: string
+  dwg_rev?: string
   completed: boolean
   original_scheduled_ship_date: string
   current_scheduled_ship_date: string
@@ -46,6 +50,7 @@ export interface CommonFormData {
   customer: string
   job_name: string
   job_address: string
+  dwg_rev: string
   completed: boolean
   original_scheduled_ship_date: string
   current_scheduled_ship_date: string

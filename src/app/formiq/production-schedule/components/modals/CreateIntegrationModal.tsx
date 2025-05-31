@@ -26,6 +26,7 @@ export default function CreateIntegrationModal({
     customer: '',
     job_name: '',
     job_address: '',
+    dwg_rev: '',
     completed: false,
     original_scheduled_ship_date: '',
     current_scheduled_ship_date: ''
@@ -42,18 +43,19 @@ export default function CreateIntegrationModal({
     try {
       const { error } = await supabase
         .from('integration')
-        .insert([{
-          company_id: companyId,
+        .insert({
           designation: formData.designation,
           type: formData.type,
           sales_order_number: formData.sales_order_number,
           customer: formData.customer,
           job_name: formData.job_name || null,
           job_address: formData.job_address || null,
+          dwg_rev: formData.dwg_rev || null,
           completed: formData.completed,
           original_scheduled_ship_date: formData.original_scheduled_ship_date,
-          current_scheduled_ship_date: formData.current_scheduled_ship_date
-        }])
+          current_scheduled_ship_date: formData.current_scheduled_ship_date,
+          company_id: companyId
+        })
 
       if (error) throw error
 
@@ -65,6 +67,7 @@ export default function CreateIntegrationModal({
         customer: '',
         job_name: '',
         job_address: '',
+        dwg_rev: '',
         completed: false,
         original_scheduled_ship_date: '',
         current_scheduled_ship_date: ''

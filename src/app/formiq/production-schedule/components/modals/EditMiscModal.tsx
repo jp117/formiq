@@ -28,6 +28,7 @@ export default function EditMiscModal({
     customer: '',
     job_name: '',
     job_address: '',
+    dwg_rev: '',
     completed: false,
     original_scheduled_ship_date: '',
     current_scheduled_ship_date: ''
@@ -45,6 +46,7 @@ export default function EditMiscModal({
         customer: miscItem.customer,
         job_name: miscItem.job_name || '',
         job_address: miscItem.job_address || '',
+        dwg_rev: miscItem.dwg_rev || '',
         completed: miscItem.completed,
         original_scheduled_ship_date: miscItem.original_scheduled_ship_date,
         current_scheduled_ship_date: miscItem.current_scheduled_ship_date
@@ -68,6 +70,7 @@ export default function EditMiscModal({
           customer: formData.customer,
           job_name: formData.job_name || null,
           job_address: formData.job_address || null,
+          dwg_rev: formData.dwg_rev || null,
           completed: formData.completed,
           original_scheduled_ship_date: formData.original_scheduled_ship_date,
           current_scheduled_ship_date: formData.current_scheduled_ship_date

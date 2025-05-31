@@ -26,6 +26,7 @@ export default function CreateMiscModal({
     customer: '',
     job_name: '',
     job_address: '',
+    dwg_rev: '',
     completed: false,
     original_scheduled_ship_date: '',
     current_scheduled_ship_date: ''
@@ -42,18 +43,19 @@ export default function CreateMiscModal({
     try {
       const { error } = await supabase
         .from('misc')
-        .insert([{
-          company_id: companyId,
+        .insert({
           quantity: formData.quantity,
           description: formData.description,
           sales_order_number: formData.sales_order_number,
           customer: formData.customer,
           job_name: formData.job_name || null,
           job_address: formData.job_address || null,
+          dwg_rev: formData.dwg_rev || null,
           completed: formData.completed,
           original_scheduled_ship_date: formData.original_scheduled_ship_date,
-          current_scheduled_ship_date: formData.current_scheduled_ship_date
-        }])
+          current_scheduled_ship_date: formData.current_scheduled_ship_date,
+          company_id: companyId
+        })
 
       if (error) throw error
 
@@ -65,6 +67,7 @@ export default function CreateMiscModal({
         customer: '',
         job_name: '',
         job_address: '',
+        dwg_rev: '',
         completed: false,
         original_scheduled_ship_date: '',
         current_scheduled_ship_date: ''

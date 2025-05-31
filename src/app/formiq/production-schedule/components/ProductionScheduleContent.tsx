@@ -31,6 +31,19 @@ function ProductionScheduleContent({
   const [isMiscModalOpen, setIsMiscModalOpen] = useState(false)
   const router = useRouter()
 
+  // Sort items by current ship date (closest date first)
+  const sortedSwitchboards = [...switchboards].sort((a, b) => 
+    new Date(a.current_scheduled_ship_date).getTime() - new Date(b.current_scheduled_ship_date).getTime()
+  )
+  
+  const sortedIntegrations = [...integrations].sort((a, b) => 
+    new Date(a.current_scheduled_ship_date).getTime() - new Date(b.current_scheduled_ship_date).getTime()
+  )
+  
+  const sortedMiscItems = [...miscItems].sort((a, b) => 
+    new Date(a.current_scheduled_ship_date).getTime() - new Date(b.current_scheduled_ship_date).getTime()
+  )
+
   const tabs = [
     { id: 'switchboards', label: 'Switchboards', count: switchboards.length },
     { id: 'integration', label: 'Integration', count: integrations.length },
@@ -85,7 +98,7 @@ function ProductionScheduleContent({
       <div>
         {activeTab === 'switchboards' && (
           switchboards.length > 0 ? (
-            <SwitchboardsTable switchboards={switchboards} userAccess={userAccess} companyId={companyId} />
+            <SwitchboardsTable switchboards={sortedSwitchboards} userAccess={userAccess} companyId={companyId} />
           ) : (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
               <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -111,7 +124,7 @@ function ProductionScheduleContent({
 
         {activeTab === 'integration' && (
           integrations.length > 0 ? (
-            <IntegrationTable integrations={integrations} userAccess={userAccess} companyId={companyId} />
+            <IntegrationTable integrations={sortedIntegrations} userAccess={userAccess} companyId={companyId} />
           ) : (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
               <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -137,7 +150,7 @@ function ProductionScheduleContent({
 
         {activeTab === 'misc' && (
           miscItems.length > 0 ? (
-            <MiscTable miscItems={miscItems} userAccess={userAccess} companyId={companyId} />
+            <MiscTable miscItems={sortedMiscItems} userAccess={userAccess} companyId={companyId} />
           ) : (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
               <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">

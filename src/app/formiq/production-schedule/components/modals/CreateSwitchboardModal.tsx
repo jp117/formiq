@@ -27,6 +27,7 @@ export default function CreateSwitchboardModal({
     customer: '',
     job_name: '',
     job_address: '',
+    dwg_rev: '',
     completed: false,
     original_scheduled_ship_date: '',
     current_scheduled_ship_date: ''
@@ -43,8 +44,7 @@ export default function CreateSwitchboardModal({
     try {
       const { error } = await supabase
         .from('switchboards')
-        .insert([{
-          company_id: companyId,
+        .insert({
           designation: formData.designation,
           nema_type: formData.nema_type,
           number_of_sections: formData.number_of_sections,
@@ -52,10 +52,12 @@ export default function CreateSwitchboardModal({
           customer: formData.customer,
           job_name: formData.job_name || null,
           job_address: formData.job_address || null,
+          dwg_rev: formData.dwg_rev || null,
           completed: formData.completed,
           original_scheduled_ship_date: formData.original_scheduled_ship_date,
-          current_scheduled_ship_date: formData.current_scheduled_ship_date
-        }])
+          current_scheduled_ship_date: formData.current_scheduled_ship_date,
+          company_id: companyId
+        })
 
       if (error) throw error
 
@@ -68,6 +70,7 @@ export default function CreateSwitchboardModal({
         customer: '',
         job_name: '',
         job_address: '',
+        dwg_rev: '',
         completed: false,
         original_scheduled_ship_date: '',
         current_scheduled_ship_date: ''

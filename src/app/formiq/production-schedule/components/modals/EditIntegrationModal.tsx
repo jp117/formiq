@@ -28,6 +28,7 @@ export default function EditIntegrationModal({
     customer: '',
     job_name: '',
     job_address: '',
+    dwg_rev: '',
     completed: false,
     original_scheduled_ship_date: '',
     current_scheduled_ship_date: ''
@@ -45,6 +46,7 @@ export default function EditIntegrationModal({
         customer: integration.customer,
         job_name: integration.job_name || '',
         job_address: integration.job_address || '',
+        dwg_rev: integration.dwg_rev || '',
         completed: integration.completed,
         original_scheduled_ship_date: integration.original_scheduled_ship_date,
         current_scheduled_ship_date: integration.current_scheduled_ship_date
@@ -68,6 +70,7 @@ export default function EditIntegrationModal({
           customer: formData.customer,
           job_name: formData.job_name || null,
           job_address: formData.job_address || null,
+          dwg_rev: formData.dwg_rev || null,
           completed: formData.completed,
           original_scheduled_ship_date: formData.original_scheduled_ship_date,
           current_scheduled_ship_date: formData.current_scheduled_ship_date

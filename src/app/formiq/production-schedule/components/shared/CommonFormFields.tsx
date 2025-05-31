@@ -18,7 +18,7 @@ export default function CommonFormFields({ formData, onChange }: CommonFormField
           <input
             type="text"
             name="sales_order_number"
-            value={formData.sales_order_number}
+            value={formData.sales_order_number || ''}
             onChange={onChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
@@ -32,7 +32,7 @@ export default function CommonFormFields({ formData, onChange }: CommonFormField
           <input
             type="text"
             name="customer"
-            value={formData.customer}
+            value={formData.customer || ''}
             onChange={onChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
@@ -42,7 +42,7 @@ export default function CommonFormFields({ formData, onChange }: CommonFormField
       </div>
 
       {/* Job Name & Address - Optional */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Job Name
@@ -51,7 +51,7 @@ export default function CommonFormFields({ formData, onChange }: CommonFormField
           <input
             type="text"
             name="job_name"
-            value={formData.job_name}
+            value={formData.job_name || ''}
             onChange={onChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
             placeholder="Job/Project name"
@@ -65,10 +65,24 @@ export default function CommonFormFields({ formData, onChange }: CommonFormField
           <input
             type="text"
             name="job_address"
-            value={formData.job_address}
+            value={formData.job_address || ''}
             onChange={onChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
             placeholder="Job site address"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Dwg Rev
+            <span className="text-gray-400 text-xs ml-1">(optional)</span>
+          </label>
+          <input
+            type="text"
+            name="dwg_rev"
+            value={formData.dwg_rev || ''}
+            onChange={onChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+            placeholder="e.g., Rev A, Rev 1"
           />
         </div>
       </div>
@@ -78,7 +92,7 @@ export default function CommonFormFields({ formData, onChange }: CommonFormField
         <input
           type="checkbox"
           name="completed"
-          checked={formData.completed}
+          checked={!!formData.completed}
           onChange={onChange}
           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
         />
@@ -96,7 +110,7 @@ export default function CommonFormFields({ formData, onChange }: CommonFormField
           <input
             type="date"
             name="original_scheduled_ship_date"
-            value={formData.original_scheduled_ship_date}
+            value={formData.original_scheduled_ship_date || ''}
             onChange={onChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
@@ -109,7 +123,7 @@ export default function CommonFormFields({ formData, onChange }: CommonFormField
           <input
             type="date"
             name="current_scheduled_ship_date"
-            value={formData.current_scheduled_ship_date}
+            value={formData.current_scheduled_ship_date || ''}
             onChange={onChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
