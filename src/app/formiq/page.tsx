@@ -50,6 +50,25 @@ export default async function FormIQPage() {
             </div>
           </Link>
         )}
+
+        {/* Frame Parts Card - Only show if user has access */}
+        {userData?.frame_parts_access && userData.frame_parts_access !== 'no_access' && (
+          <Link href="/formiq/frame-parts" className="block">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer">
+              <div className="flex items-center mb-4">
+                <div className="bg-green-100 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                <h3 className="ml-3 text-lg font-semibold text-gray-900">Frame Parts</h3>
+              </div>
+              <p className="text-gray-600 text-sm">
+                Manage and track frame parts inventory, specifications, and requirements.
+              </p>
+            </div>
+          </Link>
+        )}
       </div>
     </Layout>
   )
