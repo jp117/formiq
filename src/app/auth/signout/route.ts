@@ -11,5 +11,6 @@ export async function POST(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const redirectUrl = new URL('/', requestUrl.origin)
   
-  return NextResponse.redirect(redirectUrl)
+  // Use 303 status to force browser to use GET method for the redirect
+  return NextResponse.redirect(redirectUrl, { status: 303 })
 } 
