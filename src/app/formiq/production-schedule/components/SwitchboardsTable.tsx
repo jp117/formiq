@@ -61,12 +61,19 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
+    // Parse the date as a local date to avoid timezone issues
+    const [year, month, day] = dateString.split('-')
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+    return date.toLocaleDateString()
   }
 
   const getShipDateColorClass = (originalDate: string, currentDate: string) => {
-    const original = new Date(originalDate)
-    const current = new Date(currentDate)
+    // Parse dates as local dates to avoid timezone issues
+    const [origYear, origMonth, origDay] = originalDate.split('-')
+    const [currYear, currMonth, currDay] = currentDate.split('-')
+    
+    const original = new Date(parseInt(origYear), parseInt(origMonth) - 1, parseInt(origDay))
+    const current = new Date(parseInt(currYear), parseInt(currMonth) - 1, parseInt(currDay))
     
     if (current < original) {
       return 'bg-green-200 text-green-900 font-medium' // Earlier than original - green with very dark text
@@ -77,8 +84,12 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
   }
 
   const isPOComponentDateIssue = (componentDate: string, switchboardDate: string) => {
-    const component = new Date(componentDate)
-    const switchboard = new Date(switchboardDate)
+    // Parse dates as local dates to avoid timezone issues
+    const [compYear, compMonth, compDay] = componentDate.split('-')
+    const [swYear, swMonth, swDay] = switchboardDate.split('-')
+    
+    const component = new Date(parseInt(compYear), parseInt(compMonth) - 1, parseInt(compDay))
+    const switchboard = new Date(parseInt(swYear), parseInt(swMonth) - 1, parseInt(swDay))
     const twoWeeksBefore = new Date(switchboard)
     twoWeeksBefore.setDate(switchboard.getDate() - 14)
     
@@ -114,36 +125,33 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="w-8 px-6 py-3"></th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="w-8 px-3 py-3"></th>
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Designation
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Sales Order
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Customer
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Job Name
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 NEMA Type
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Sections
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Dwg Rev
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Original Ship Date
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Current Ship Date
               </th>
               {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               )}
@@ -152,7 +160,7 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
           <tbody className="bg-white divide-y divide-gray-200">
             {switchboards.length === 0 ? (
               <tr>
-                <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 11 : 10} className="px-6 py-12 text-center">
+                <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 10 : 9} className="px-6 py-12 text-center">
                   <div className="text-gray-500">
                     <svg className="w-8 h-8 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -176,7 +184,7 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                       toggleRow(switchboard.id)
                     }}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-3 whitespace-nowrap">
                       <button className="text-gray-400 hover:text-gray-600">
                         <svg
                           className={`w-4 h-4 transform transition-transform ${
@@ -190,50 +198,86 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                         </svg>
                       </button>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-3 py-3 text-sm font-medium text-gray-900">
                       <div className="flex items-center justify-center gap-2">
-                        {switchboard.designation}
+                        <span className="max-w-32 truncate" title={switchboard.designation}>
+                          {switchboard.designation}
+                        </span>
                         {isItemReady(switchboard) && (
                           <span className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                            ✓ Matl
+                            ✓
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-                      {switchboard.sales_order_number}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center max-w-24">
+                      <span className="block truncate" title={switchboard.sales_order_number}>
+                        {switchboard.sales_order_number}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-                      {switchboard.customer}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center max-w-32">
+                      <span className="block truncate" title={switchboard.customer}>
+                        {switchboard.customer}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-                      {switchboard.job_name || switchboard.job_address || '-'}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center max-w-40">
+                      <span className="block truncate" title={switchboard.job_name || switchboard.job_address || '-'}>
+                        {switchboard.job_name || switchboard.job_address || '-'}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
                       {switchboard.nema_type}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
                       {switchboard.number_of_sections}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
                       {switchboard.dwg_rev || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-                      {formatDate(switchboard.original_scheduled_ship_date)}
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm text-center ${getShipDateColorClass(switchboard.original_scheduled_ship_date, switchboard.current_scheduled_ship_date)}`}>
+                    <td className={`px-3 py-3 whitespace-nowrap text-sm text-center ${getShipDateColorClass(switchboard.original_scheduled_ship_date, switchboard.current_scheduled_ship_date)}`}>
                       {formatDate(switchboard.current_scheduled_ship_date)}
                     </td>
                     {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
                         <button className="text-blue-600 hover:text-blue-800 mr-2" onClick={(e) => handleEdit(e, switchboard)}>Edit</button>
                       </td>
                     )}
                   </tr>
                   {expandedRows.has(switchboard.id) && (
                     <tr>
-                      <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 11 : 10} className="px-6 py-4 bg-gray-50">
+                      <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 10 : 9} className="px-6 py-4 bg-gray-50">
                         <div className="space-y-4">
+                          {/* Summary Section */}
+                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 className="text-sm font-medium text-gray-900 mb-3">Summary</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                              <div>
+                                <span className="font-medium text-gray-700">Original Ship Date:</span>
+                                <span className="ml-2 text-gray-900">{formatDate(switchboard.original_scheduled_ship_date)}</span>
+                              </div>
+                              <div>
+                                <span className="font-medium text-gray-700">Current Ship Date:</span>
+                                <span className={`ml-2 ${getShipDateColorClass(switchboard.original_scheduled_ship_date, switchboard.current_scheduled_ship_date)}`}>
+                                  {formatDate(switchboard.current_scheduled_ship_date)}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="font-medium text-gray-700">Material Status:</span>
+                                <span className="ml-2">
+                                  {isItemReady(switchboard) ? (
+                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                      ✓ Complete
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                                      Pending
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
                           {switchboard.job_address && (
                             <div>
                               <span className="text-sm font-medium text-gray-900">Job Address: </span>

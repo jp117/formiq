@@ -47,12 +47,19 @@ export default function IntegrationTable({ integrations, userAccess, companyId }
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
+    // Parse the date as a local date to avoid timezone issues
+    const [year, month, day] = dateString.split('-')
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+    return date.toLocaleDateString()
   }
 
   const getShipDateColorClass = (originalDate: string, currentDate: string) => {
-    const original = new Date(originalDate)
-    const current = new Date(currentDate)
+    // Parse dates as local dates to avoid timezone issues
+    const [origYear, origMonth, origDay] = originalDate.split('-')
+    const [currYear, currMonth, currDay] = currentDate.split('-')
+    
+    const original = new Date(parseInt(origYear), parseInt(origMonth) - 1, parseInt(origDay))
+    const current = new Date(parseInt(currYear), parseInt(currMonth) - 1, parseInt(currDay))
     
     if (current < original) {
       return 'bg-green-200 text-green-900 font-medium' // Earlier than original - green with very dark text
@@ -63,8 +70,12 @@ export default function IntegrationTable({ integrations, userAccess, companyId }
   }
 
   const isPOComponentDateIssue = (componentDate: string, integrationDate: string) => {
-    const component = new Date(componentDate)
-    const integration = new Date(integrationDate)
+    // Parse dates as local dates to avoid timezone issues
+    const [compYear, compMonth, compDay] = componentDate.split('-')
+    const [intYear, intMonth, intDay] = integrationDate.split('-')
+    
+    const component = new Date(parseInt(compYear), parseInt(compMonth) - 1, parseInt(compDay))
+    const integration = new Date(parseInt(intYear), parseInt(intMonth) - 1, parseInt(intDay))
     const twoWeeksBefore = new Date(integration)
     twoWeeksBefore.setDate(integration.getDate() - 14)
     
@@ -115,33 +126,30 @@ export default function IntegrationTable({ integrations, userAccess, companyId }
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="w-8 px-6 py-3"></th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="w-8 px-3 py-3"></th>
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Designation
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Sales Order
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Customer
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Job Name
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Dwg Rev
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Original Ship Date
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Current Ship Date
               </th>
               {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               )}
@@ -150,7 +158,7 @@ export default function IntegrationTable({ integrations, userAccess, companyId }
           <tbody className="bg-white divide-y divide-gray-200">
             {integrations.length === 0 ? (
               <tr>
-                <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 10 : 9} className="px-6 py-12 text-center">
+                <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 9 : 8} className="px-6 py-12 text-center">
                   <div className="text-gray-500">
                     <svg className="w-8 h-8 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -171,7 +179,7 @@ export default function IntegrationTable({ integrations, userAccess, companyId }
                     }`}
                     onClick={() => toggleRow(integration.id)}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-3 whitespace-nowrap">
                       <button className="text-gray-400 hover:text-gray-600">
                         <svg
                           className={`w-4 h-4 transform transition-transform ${
@@ -185,47 +193,83 @@ export default function IntegrationTable({ integrations, userAccess, companyId }
                         </svg>
                       </button>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-3 py-3 text-sm font-medium text-gray-900">
                       <div className="flex items-center justify-center gap-2">
-                        {integration.designation}
+                        <span className="max-w-32 truncate" title={integration.designation}>
+                          {integration.designation}
+                        </span>
                         {isItemReady(integration) && (
                           <span className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                            ✓ Matl
+                            ✓
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-                      {integration.sales_order_number}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center max-w-24">
+                      <span className="block truncate" title={integration.sales_order_number}>
+                        {integration.sales_order_number}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-                      {integration.customer}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center max-w-32">
+                      <span className="block truncate" title={integration.customer}>
+                        {integration.customer}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-                      {integration.job_name || integration.job_address || '-'}
+                    <td className="px-3 py-3 text-sm text-gray-900 text-center max-w-40">
+                      <span className="block truncate" title={integration.job_name || integration.job_address || '-'}>
+                        {integration.job_name || integration.job_address || '-'}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
                       {integration.type}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
                       {integration.dwg_rev || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-                      {formatDate(integration.original_scheduled_ship_date)}
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm text-center ${getShipDateColorClass(integration.original_scheduled_ship_date, integration.current_scheduled_ship_date)}`}>
+                    <td className={`px-3 py-3 whitespace-nowrap text-sm text-center ${getShipDateColorClass(integration.original_scheduled_ship_date, integration.current_scheduled_ship_date)}`}>
                       {formatDate(integration.current_scheduled_ship_date)}
                     </td>
                     {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                      <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
                         <button className="text-blue-600 hover:text-blue-800" onClick={(e) => handleEdit(e, integration)}>Edit</button>
                       </td>
                     )}
                   </tr>
                   {expandedRows.has(integration.id) && (
                     <tr>
-                      <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 10 : 9} className="px-6 py-4 bg-gray-50">
+                      <td colSpan={(userAccess === 'edit_access' || userAccess === 'admin_access') ? 9 : 8} className="px-6 py-4 bg-gray-50">
                         <div className="space-y-4">
+                          {/* Summary Section */}
+                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 className="text-sm font-medium text-gray-900 mb-3">Summary</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                              <div>
+                                <span className="font-medium text-gray-700">Original Ship Date:</span>
+                                <span className="ml-2 text-gray-900">{formatDate(integration.original_scheduled_ship_date)}</span>
+                              </div>
+                              <div>
+                                <span className="font-medium text-gray-700">Current Ship Date:</span>
+                                <span className={`ml-2 ${getShipDateColorClass(integration.original_scheduled_ship_date, integration.current_scheduled_ship_date)}`}>
+                                  {formatDate(integration.current_scheduled_ship_date)}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="font-medium text-gray-700">Material Status:</span>
+                                <span className="ml-2">
+                                  {isItemReady(integration) ? (
+                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                      ✓ Complete
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                                      Pending
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
                           {integration.job_address && (
                             <div>
                               <span className="text-sm font-medium text-gray-900">Job Address: </span>
