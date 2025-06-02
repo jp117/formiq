@@ -47,12 +47,19 @@ export default function MiscTable({ miscItems, userAccess, companyId }: MiscTabl
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
+    // Parse the date as a local date to avoid timezone issues
+    const [year, month, day] = dateString.split('-')
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+    return date.toLocaleDateString()
   }
 
   const getShipDateColorClass = (originalDate: string, currentDate: string) => {
-    const original = new Date(originalDate)
-    const current = new Date(currentDate)
+    // Parse dates as local dates to avoid timezone issues
+    const [origYear, origMonth, origDay] = originalDate.split('-')
+    const [currYear, currMonth, currDay] = currentDate.split('-')
+    
+    const original = new Date(parseInt(origYear), parseInt(origMonth) - 1, parseInt(origDay))
+    const current = new Date(parseInt(currYear), parseInt(currMonth) - 1, parseInt(currDay))
     
     if (current < original) {
       return 'bg-green-200 text-green-900 font-medium' // Earlier than original - green with very dark text
@@ -63,8 +70,12 @@ export default function MiscTable({ miscItems, userAccess, companyId }: MiscTabl
   }
 
   const isPOComponentDateIssue = (componentDate: string, miscDate: string) => {
-    const component = new Date(componentDate)
-    const misc = new Date(miscDate)
+    // Parse dates as local dates to avoid timezone issues
+    const [compYear, compMonth, compDay] = componentDate.split('-')
+    const [miscYear, miscMonth, miscDay] = miscDate.split('-')
+    
+    const component = new Date(parseInt(compYear), parseInt(compMonth) - 1, parseInt(compDay))
+    const misc = new Date(parseInt(miscYear), parseInt(miscMonth) - 1, parseInt(miscDay))
     const twoWeeksBefore = new Date(misc)
     twoWeeksBefore.setDate(misc.getDate() - 14)
     

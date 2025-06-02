@@ -47,12 +47,19 @@ export default function IntegrationTable({ integrations, userAccess, companyId }
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
+    // Parse the date as a local date to avoid timezone issues
+    const [year, month, day] = dateString.split('-')
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+    return date.toLocaleDateString()
   }
 
   const getShipDateColorClass = (originalDate: string, currentDate: string) => {
-    const original = new Date(originalDate)
-    const current = new Date(currentDate)
+    // Parse dates as local dates to avoid timezone issues
+    const [origYear, origMonth, origDay] = originalDate.split('-')
+    const [currYear, currMonth, currDay] = currentDate.split('-')
+    
+    const original = new Date(parseInt(origYear), parseInt(origMonth) - 1, parseInt(origDay))
+    const current = new Date(parseInt(currYear), parseInt(currMonth) - 1, parseInt(currDay))
     
     if (current < original) {
       return 'bg-green-200 text-green-900 font-medium' // Earlier than original - green with very dark text
@@ -63,8 +70,12 @@ export default function IntegrationTable({ integrations, userAccess, companyId }
   }
 
   const isPOComponentDateIssue = (componentDate: string, integrationDate: string) => {
-    const component = new Date(componentDate)
-    const integration = new Date(integrationDate)
+    // Parse dates as local dates to avoid timezone issues
+    const [compYear, compMonth, compDay] = componentDate.split('-')
+    const [intYear, intMonth, intDay] = integrationDate.split('-')
+    
+    const component = new Date(parseInt(compYear), parseInt(compMonth) - 1, parseInt(compDay))
+    const integration = new Date(parseInt(intYear), parseInt(intMonth) - 1, parseInt(intDay))
     const twoWeeksBefore = new Date(integration)
     twoWeeksBefore.setDate(integration.getDate() - 14)
     
