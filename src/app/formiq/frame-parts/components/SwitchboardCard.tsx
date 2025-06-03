@@ -89,6 +89,7 @@ export default function SwitchboardCard({ switchboardNumber, userAccess, onDataC
       jobNameAddress,
       sections
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [switchboardNumber, soNumber, customerName, switchboardDesignation, jobNameAddress, sections])
 
   const updateSectionField = (sectionIndex: number, field: keyof SectionData, value: string | boolean) => {

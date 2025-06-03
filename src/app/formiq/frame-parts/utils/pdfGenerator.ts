@@ -117,7 +117,7 @@ export async function generateFramePartsReport(
         doc.text('Standard Sections:', margin, yPosition)
         yPosition += 10
 
-        const standardData = standardSections.map((section, idx) => {
+        const standardData = standardSections.map((section) => {
           const width = section.width || '0'
           const height = section.height || '0'
           const depth = section.depth || '0'
@@ -153,7 +153,7 @@ export async function generateFramePartsReport(
           styles: { fontSize: 9 }
         })
 
-        yPosition = (doc as any).lastAutoTable.finalY + 10
+        yPosition = (doc as typeof doc & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
       }
 
       // L-Shaped Sections
@@ -162,7 +162,7 @@ export async function generateFramePartsReport(
         doc.text('L-Shaped Sections:', margin, yPosition)
         yPosition += 10
 
-        const lShapedData = lShapedSections.map((section, idx) => {
+        const lShapedData = lShapedSections.map((section) => {
           const width = section.width || '0'
           const height = section.height || '0'
           const depth = section.depth || '0'
@@ -198,7 +198,7 @@ export async function generateFramePartsReport(
           styles: { fontSize: 9 }
         })
 
-        yPosition = (doc as any).lastAutoTable.finalY + 15
+        yPosition = (doc as typeof doc & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 15
       }
 
       // Add some spacing between switchboards
