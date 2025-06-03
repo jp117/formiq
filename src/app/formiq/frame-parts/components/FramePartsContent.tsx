@@ -9,7 +9,7 @@ interface FramePartsContentProps {
 
 export default function FramePartsContent({ userAccess }: FramePartsContentProps) {
   const [reportName, setReportName] = useState('')
-  const [numberOfSwitchboards, setNumberOfSwitchboards] = useState('')
+  const [numberOfSwitchboards, setNumberOfSwitchboards] = useState('1')
 
   // Generate array for switchboard cards
   const switchboardsValue = numberOfSwitchboards === '' ? 0 : Math.max(1, Math.min(50, parseInt(numberOfSwitchboards) || 1))
@@ -31,9 +31,9 @@ export default function FramePartsContent({ userAccess }: FramePartsContentProps
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto">
       {/* Master Control Card */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-w-[800px]">
         <div className="flex items-center mb-4">
           <div className="bg-blue-100 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,6 +99,16 @@ export default function FramePartsContent({ userAccess }: FramePartsContentProps
                 userAccess={userAccess}
               />
             ))}
+          </div>
+          
+          {/* Generate Report Button */}
+          <div className="pt-6">
+            <button
+              type="button"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 px-8 rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            >
+              Generate Report
+            </button>
           </div>
         </div>
       )}

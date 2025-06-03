@@ -11,10 +11,15 @@ interface SectionData {
   width: string
   height: string
   depth: string
+  isStandard: boolean
+  isLShaped: boolean
 }
 
 export default function SwitchboardCard({ switchboardNumber, userAccess }: SwitchboardCardProps) {
   const [switchboardDesignation, setSwitchboardDesignation] = useState('')
+  const [soNumber, setSoNumber] = useState('')
+  const [customerName, setCustomerName] = useState('')
+  const [jobNameAddress, setJobNameAddress] = useState('')
   const [numberOfSections, setNumberOfSections] = useState('0')
   const [commonHeight, setCommonHeight] = useState('')
   const [commonDepth, setCommonDepth] = useState('')
@@ -43,7 +48,7 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
     setSections(prevSections => {
       const newSections: SectionData[] = Array.from({ length: sectionsValue }, (_, index) => {
         // Keep existing data if it exists, otherwise create new
-        return prevSections[index] || { width: '', height: '', depth: '' }
+        return prevSections[index] || { width: '', height: '', depth: '', isStandard: true, isLShaped: false }
       })
       return newSections
     })
@@ -62,7 +67,7 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
     }
   }, [commonHeight, commonDepth])
 
-  const updateSectionField = (sectionIndex: number, field: keyof SectionData, value: string) => {
+  const updateSectionField = (sectionIndex: number, field: keyof SectionData, value: string | boolean) => {
     setSections(prevSections => 
       prevSections.map((section, index) => 
         index === sectionIndex 
@@ -72,10 +77,24 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
     )
   }
 
+  const handleShapeChange = (sectionIndex: number, shapeType: 'standard' | 'lshaped') => {
+    setSections(prevSections => 
+      prevSections.map((section, index) => 
+        index === sectionIndex 
+          ? { 
+              ...section, 
+              isStandard: shapeType === 'standard',
+              isLShaped: shapeType === 'lshaped'
+            }
+          : section
+      )
+    )
+  }
+
   const isReadOnly = userAccess === 'view_access'
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-w-[800px] max-w-[800px]">
       {/* Card Header */}
       <div className="flex items-center mb-4">
         <div className="bg-green-100 rounded-lg p-2 w-8 h-8 flex items-center justify-center">
@@ -88,29 +107,104 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
         </h4>
       </div>
 
-      {/* Switchboard Designation and Number of Sections */}
+      {/* Switchboard Details */}
       <div className="space-y-4">
-        {/* Switchboard Designation Input */}
-        <div>
-          <label 
-            htmlFor={`designation-${switchboardNumber}`} 
-            className="block text-sm font-medium text-gray-900 mb-2"
-          >
-            Switchboard Designation
-          </label>
-          <input
-            type="text"
-            id={`designation-${switchboardNumber}`}
-            value={switchboardDesignation}
-            onChange={(e) => setSwitchboardDesignation(e.target.value)}
-            disabled={isReadOnly}
-            placeholder="Enter designation..."
-            className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-              isReadOnly 
-                ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
-                : 'bg-white text-gray-900'
-            }`}
-          />
+        {/* SO Number and Customer Name Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* SO Number */}
+          <div>
+            <label 
+              htmlFor={`so-number-${switchboardNumber}`} 
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
+              SO Number
+            </label>
+            <input
+              type="text"
+              id={`so-number-${switchboardNumber}`}
+              value={soNumber}
+              onChange={(e) => setSoNumber(e.target.value)}
+              disabled={isReadOnly}
+              placeholder="Enter SO number..."
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                isReadOnly 
+                  ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
+                  : 'bg-white text-gray-900'
+              }`}
+            />
+          </div>
+
+          {/* Customer Name */}
+          <div>
+            <label 
+              htmlFor={`customer-name-${switchboardNumber}`} 
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
+              Customer Name
+            </label>
+            <input
+              type="text"
+              id={`customer-name-${switchboardNumber}`}
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              disabled={isReadOnly}
+              placeholder="Enter customer name..."
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                isReadOnly 
+                  ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
+                  : 'bg-white text-gray-900'
+              }`}
+            />
+          </div>
+        </div>
+
+        {/* Designation and Job Name/Address Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Switchboard Designation */}
+          <div>
+            <label 
+              htmlFor={`designation-${switchboardNumber}`} 
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
+              Switchboard Designation
+            </label>
+            <input
+              type="text"
+              id={`designation-${switchboardNumber}`}
+              value={switchboardDesignation}
+              onChange={(e) => setSwitchboardDesignation(e.target.value)}
+              disabled={isReadOnly}
+              placeholder="Enter designation..."
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                isReadOnly 
+                  ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
+                  : 'bg-white text-gray-900'
+              }`}
+            />
+          </div>
+
+          {/* Job Name/Address */}
+          <div>
+            <label 
+              htmlFor={`job-name-address-${switchboardNumber}`} 
+              className="block text-sm font-medium text-gray-900 mb-2"
+            >
+              Job Name/Address
+            </label>
+            <input
+              type="text"
+              id={`job-name-address-${switchboardNumber}`}
+              value={jobNameAddress}
+              onChange={(e) => setJobNameAddress(e.target.value)}
+              disabled={isReadOnly}
+              placeholder="Enter job name or address..."
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                isReadOnly 
+                  ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
+                  : 'bg-white text-gray-900'
+              }`}
+            />
+          </div>
         </div>
 
         {/* Number of Sections Input */}
@@ -191,25 +285,25 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
         {sectionsValue > 0 && (
           <div className="border-t pt-4">
             <h5 className="text-sm font-medium text-gray-900 mb-3">Section Details</h5>
-            <div className="space-y-3">
+            <div className="overflow-x-auto">
               {/* Header Row */}
-              <div className="grid grid-cols-4 gap-2 text-xs font-medium text-gray-700">
-                <div>Section</div>
-                <div>Width</div>
-                <div>Height</div>
-                <div>Depth</div>
+              <div className="grid grid-cols-6 gap-2 mb-2">
+                <div className="text-xs font-medium text-gray-700">Section</div>
+                <div className="text-xs font-medium text-gray-700">Width</div>
+                <div className="text-xs font-medium text-gray-700">Height</div>
+                <div className="text-xs font-medium text-gray-700">Depth</div>
+                <div className="text-xs font-medium text-gray-700 text-center">S</div>
+                <div className="text-xs font-medium text-gray-700 text-center">L</div>
               </div>
               
               {/* Section Rows */}
-              {sections.map((section, index) => (
-                <div key={index} className="grid grid-cols-4 gap-2">
-                  {/* Section Number */}
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-600">#{index + 1}</span>
-                  </div>
-                  
-                  {/* Width Input */}
-                  <div>
+              <div className="space-y-2">
+                {sections.map((section, index) => (
+                  <div key={index} className="grid grid-cols-6 gap-2 items-center">
+                    {/* Section Number */}
+                    <div className="text-sm text-gray-600">#{index + 1}</div>
+                    
+                    {/* Width Input */}
                     <input
                       type="text"
                       inputMode="numeric"
@@ -217,16 +311,15 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
                       onChange={(e) => updateSectionField(index, 'width', e.target.value)}
                       disabled={isReadOnly}
                       placeholder="W"
-                      className={`w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 ${
+                      maxLength={3}
+                      className={`px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 ${
                         isReadOnly 
                           ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
                           : 'bg-white text-gray-900'
                       }`}
                     />
-                  </div>
-                  
-                  {/* Height Input */}
-                  <div>
+                    
+                    {/* Height Input */}
                     <input
                       type="text"
                       inputMode="numeric"
@@ -234,16 +327,15 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
                       onChange={(e) => updateSectionField(index, 'height', e.target.value)}
                       disabled={isReadOnly || !!commonHeight}
                       placeholder="H"
-                      className={`w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 ${
+                      maxLength={3}
+                      className={`px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 ${
                         isReadOnly || commonHeight
                           ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
                           : 'bg-white text-gray-900'
                       }`}
                     />
-                  </div>
-                  
-                  {/* Depth Input */}
-                  <div>
+                    
+                    {/* Depth Input */}
                     <input
                       type="text"
                       inputMode="numeric"
@@ -251,15 +343,42 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
                       onChange={(e) => updateSectionField(index, 'depth', e.target.value)}
                       disabled={isReadOnly || !!commonDepth}
                       placeholder="D"
-                      className={`w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 ${
+                      maxLength={3}
+                      className={`px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 ${
                         isReadOnly || commonDepth
                           ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
                           : 'bg-white text-gray-900'
                       }`}
                     />
+                    
+                    {/* Standard Checkbox */}
+                    <div className="flex justify-center">
+                      <input
+                        type="checkbox"
+                        checked={section.isStandard}
+                        onChange={(e) => e.target.checked && handleShapeChange(index, 'standard')}
+                        disabled={isReadOnly}
+                        className={`w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 ${
+                          isReadOnly ? 'cursor-not-allowed' : 'cursor-pointer'
+                        }`}
+                      />
+                    </div>
+                    
+                    {/* L-Shaped Checkbox */}
+                    <div className="flex justify-center">
+                      <input
+                        type="checkbox"
+                        checked={section.isLShaped}
+                        onChange={(e) => e.target.checked && handleShapeChange(index, 'lshaped')}
+                        disabled={isReadOnly}
+                        className={`w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 ${
+                          isReadOnly ? 'cursor-not-allowed' : 'cursor-pointer'
+                        }`}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}
