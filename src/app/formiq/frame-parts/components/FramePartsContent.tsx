@@ -1,15 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import SwitchboardCard from './SwitchboardCard'
+import { generateFramePartsReport } from '../utils/pdfGenerator'
 
 interface FramePartsContentProps {
   userAccess: string
 }
 
+interface SwitchboardData {
+  switchboardNumber: number
+  soNumber: string
+  customerName: string
+  switchboardDesignation: string
+  jobNameAddress: string
+  sections: Array<{
+    width: string
+    height: string
+    depth: string
+    isStandard: boolean
+    isLShaped: boolean
+  }>
+}
+
 export default function FramePartsContent({ userAccess }: FramePartsContentProps) {
   const [reportName, setReportName] = useState('')
   const [numberOfSwitchboards, setNumberOfSwitchboards] = useState('1')
+  const [switchboardsData, setSwitchboardsData] = useState<SwitchboardData[]>([])
 
   // Generate array for switchboard cards
   const switchboardsValue = numberOfSwitchboards === '' ? 0 : Math.max(1, Math.min(50, parseInt(numberOfSwitchboards) || 1))
@@ -28,6 +45,25 @@ export default function FramePartsContent({ userAccess }: FramePartsContentProps
       // Still store the string value to preserve user input behavior
       setNumberOfSwitchboards(value)
     }
+  }
+
+  const updateSwitchboardData = useCallback((switchboardNumber: number, data: Partial<SwitchboardData>) => {
+    setSwitchboardsData(prev => {
+      const existing = prev.find(sb => sb.switchboardNumber === switchboardNumber)
+      if (existing) {
+        return prev.map(sb => 
+          sb.switchboardNumber === switchboardNumber 
+            ? { ...sb, ...data }
+            : sb
+        )
+      } else {
+        return [...prev, { switchboardNumber, ...data } as SwitchboardData]
+      }
+    })
+  }, [])
+
+  const handleGeneratePDF = () => {
+    generateFramePartsReport(reportName, switchboardsValue, switchboardsData)
   }
 
   return (
@@ -76,15 +112,6 @@ export default function FramePartsContent({ userAccess }: FramePartsContentProps
             />
           </div>
         </div>
-
-        {reportName && (
-          <div className="mt-4 p-3 bg-gray-50 rounded-md">
-            <p className="text-sm text-gray-800">
-              <span className="font-medium">Report:</span> {reportName} 
-              <span className="ml-4 font-medium">Switchboards:</span> {switchboardsValue}
-            </p>
-          </div>
-        )}
       </div>
 
       {/* Switchboard Cards */}
@@ -97,6 +124,7 @@ export default function FramePartsContent({ userAccess }: FramePartsContentProps
                 key={index}
                 switchboardNumber={index + 1}
                 userAccess={userAccess}
+                onDataChange={updateSwitchboardData}
               />
             ))}
           </div>
@@ -106,6 +134,7 @@ export default function FramePartsContent({ userAccess }: FramePartsContentProps
             <button
               type="button"
               className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 px-8 rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              onClick={handleGeneratePDF}
             >
               Generate Report
             </button>

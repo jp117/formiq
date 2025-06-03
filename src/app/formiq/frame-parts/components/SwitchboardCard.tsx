@@ -5,6 +5,19 @@ import { useState, useEffect } from 'react'
 interface SwitchboardCardProps {
   switchboardNumber: number
   userAccess: string
+  onDataChange?: (switchboardNumber: number, data: {
+    soNumber: string
+    customerName: string
+    switchboardDesignation: string
+    jobNameAddress: string
+    sections: Array<{
+      width: string
+      height: string
+      depth: string
+      isStandard: boolean
+      isLShaped: boolean
+    }>
+  }) => void
 }
 
 interface SectionData {
@@ -15,7 +28,7 @@ interface SectionData {
   isLShaped: boolean
 }
 
-export default function SwitchboardCard({ switchboardNumber, userAccess }: SwitchboardCardProps) {
+export default function SwitchboardCard({ switchboardNumber, userAccess, onDataChange }: SwitchboardCardProps) {
   const [switchboardDesignation, setSwitchboardDesignation] = useState('')
   const [soNumber, setSoNumber] = useState('')
   const [customerName, setCustomerName] = useState('')
@@ -66,6 +79,17 @@ export default function SwitchboardCard({ switchboardNumber, userAccess }: Switc
       )
     }
   }, [commonHeight, commonDepth])
+
+  // Send data updates to parent
+  useEffect(() => {
+    onDataChange?.(switchboardNumber, {
+      soNumber,
+      customerName,
+      switchboardDesignation,
+      jobNameAddress,
+      sections
+    })
+  }, [switchboardNumber, soNumber, customerName, switchboardDesignation, jobNameAddress, sections])
 
   const updateSectionField = (sectionIndex: number, field: keyof SectionData, value: string | boolean) => {
     setSections(prevSections => 
