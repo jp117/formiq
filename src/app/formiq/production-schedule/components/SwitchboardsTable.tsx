@@ -139,12 +139,12 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                 Job Name
               </th>
               <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                NEMA Type
+                Nema
               </th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
                 Sections
               </th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
                 Dwg Rev
               </th>
               <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -200,7 +200,7 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                     </td>
                     <td className="px-3 py-3 text-sm font-medium text-gray-900">
                       <div className="flex items-center justify-center gap-2">
-                        <span className="max-w-32 truncate" title={switchboard.designation}>
+                        <span className="" title={switchboard.designation}>
                           {switchboard.designation}
                         </span>
                         {isItemReady(switchboard) && (
@@ -225,13 +225,13 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                         {switchboard.job_name || switchboard.job_address || '-'}
                       </span>
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center w-16">
                       {switchboard.nema_type}
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center w-20">
                       {switchboard.number_of_sections}
                     </td>
-                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center">
+                    <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-center w-20">
                       {switchboard.dwg_rev || '-'}
                     </td>
                     <td className={`px-3 py-3 whitespace-nowrap text-sm text-center ${getShipDateColorClass(switchboard.original_scheduled_ship_date, switchboard.current_scheduled_ship_date)}`}>
@@ -278,14 +278,7 @@ export default function SwitchboardsTable({ switchboards, userAccess, companyId 
                             </div>
                           </div>
 
-                          {switchboard.job_address && (
-                            <div>
-                              <span className="text-sm font-medium text-gray-900">Job Address: </span>
-                              <span className="text-sm text-gray-600">{switchboard.job_address}</span>
-                            </div>
-                          )}
-                          <div className="flex justify-between items-center">
-                            <h4 className="text-sm font-medium text-gray-900">Purchase Orders</h4>
+                          <div className="flex justify-end items-center">
                             {(userAccess === 'edit_access' || userAccess === 'admin_access') && (
                               <button 
                                 onClick={(e) => handleAddPO(e, switchboard.id)}

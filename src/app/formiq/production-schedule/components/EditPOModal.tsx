@@ -174,6 +174,37 @@ export default function EditPOModal({
     }
   }
 
+  const handleDeletePO = async () => {
+    if (confirm('Are you sure you want to delete this entire purchase order? This will also delete all components associated with it.')) {
+      setIsSubmitting(true)
+      try {
+        // Delete all components first (if not handled by CASCADE)
+        const { error: componentsError } = await supabase
+          .from('components')
+          .delete()
+          .eq('purchase_order_id', purchaseOrder.id)
+
+        if (componentsError) throw componentsError
+
+        // Delete the purchase order
+        const { error: poError } = await supabase
+          .from('purchase_orders')
+          .delete()
+          .eq('id', purchaseOrder.id)
+
+        if (poError) throw poError
+
+        onClose()
+        onPOUpdated()
+      } catch (error) {
+        console.error('Error deleting PO:', error)
+        alert('Error deleting purchase order. Please try again.')
+      } finally {
+        setIsSubmitting(false)
+      }
+    }
+  }
+
   const formatDate = (dateString: string) => {
     if (!dateString) return ''
     return new Date(dateString).toISOString().split('T')[0]
@@ -435,7 +466,14 @@ export default function EditPOModal({
             </form>
           </div>
 
-          <div className="flex justify-end pt-4 border-t">
+          <div className="flex justify-between pt-4 border-t">
+            <button
+              onClick={handleDeletePO}
+              disabled={isSubmitting}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+            >
+              Delete PO
+            </button>
             <button
               onClick={() => {
                 onClose()
