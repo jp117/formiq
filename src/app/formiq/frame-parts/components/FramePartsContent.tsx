@@ -67,9 +67,9 @@ export default function FramePartsContent({ userAccess }: FramePartsContentProps
   }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6">
       {/* Master Control Card */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-w-[800px]">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center mb-4">
           <div className="bg-blue-100 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

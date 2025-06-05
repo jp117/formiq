@@ -119,7 +119,7 @@ export default function SwitchboardCard({ switchboardNumber, userAccess, onDataC
   const isReadOnly = userAccess === 'view_access'
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-w-[800px] max-w-[800px]">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       {/* Card Header */}
       <div className="flex items-center mb-4">
         <div className="bg-green-100 rounded-lg p-2 w-8 h-8 flex items-center justify-center">
