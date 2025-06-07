@@ -13,7 +13,7 @@ export default async function ProductionSchedulePage() {
     redirect('/')
   }
 
-  // Get user data including approval status
+  // Get user data including approval status and admin status
   const { data: userData } = await supabase
     .from('users')
     .select(`

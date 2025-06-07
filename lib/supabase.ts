@@ -23,6 +23,9 @@ export interface User {
   email: string
   company_id: string | null
   is_approved: boolean
+  is_admin: boolean
+  production_schedule_access: string
+  frame_parts_access: string
   created_at: string
   updated_at: string
   company?: Company

@@ -6,6 +6,7 @@ interface LayoutProps {
   children: ReactNode
   userData: {
     first_name: string
+    is_admin?: boolean
     company?: {
       company_name: string
     }
