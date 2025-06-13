@@ -36,7 +36,8 @@ export default async function QuoteAdminPage() {
   const { data: quoteComponents } = await supabase
     .from('quote_components')
     .select('*')
-    .order('component_name', { ascending: true })
+    .order('type', { ascending: true })
+    .order('vendor', { ascending: true })
 
   const breadcrumbs = [
     { label: 'Dashboard', href: '/formiq' },

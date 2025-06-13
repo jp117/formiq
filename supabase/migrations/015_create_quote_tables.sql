@@ -1,4 +1,4 @@
--- Create quotes table
+npm -- Create quotes table
 CREATE TABLE quotes (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   company_id uuid REFERENCES companies(id) ON DELETE CASCADE,

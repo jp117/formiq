@@ -70,30 +70,6 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
     }
   }
 
-  const handleUpdateComponent = async (id: string, updates: Partial<QuoteComponent>) => {
-    setLoading(id)
-    try {
-      const response = await fetch('/api/quote-admin/components', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id, updates }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to update component')
-      }
-
-      router.refresh()
-    } catch (error) {
-      console.error('Error updating component:', error)
-      alert('Failed to update component. Please try again.')
-    } finally {
-      setLoading(null)
-    }
-  }
-
   const handleDeleteComponent = async (id: string) => {
     if (!confirm('Are you sure you want to delete this component? This action cannot be undone.')) {
       return
