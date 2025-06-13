@@ -10,6 +10,7 @@ interface User {
   email: string
   is_approved: boolean
   is_admin: boolean
+  is_quote_admin: boolean
   production_schedule_access: string
   frame_parts_access: string
   created_at: string
@@ -196,6 +197,9 @@ export default function AdminContent({ users }: AdminContentProps) {
                   Admin
                 </th>
                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Quote Admin
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Production
                 </th>
                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -245,6 +249,19 @@ export default function AdminContent({ users }: AdminContentProps) {
                       } ${loading === user.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {user.is_admin ? 'Admin' : 'User'}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <button
+                      onClick={() => handleUpdateUser(user.id, { is_quote_admin: !user.is_quote_admin })}
+                      disabled={loading === user.id}
+                      className={`px-2 py-1 text-xs font-semibold rounded transition-colors ${
+                        user.is_quote_admin
+                          ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      } ${loading === user.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {user.is_quote_admin ? 'Quote Admin' : 'User'}
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
