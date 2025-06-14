@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '../../../../lib/supabase-server'
 import Layout from '../components/Layout'
-import QuoteComponentsManager from './components/QuoteComponentsManager'
+import QuoteAdminTabs from './components/QuoteAdminTabs'
 
 export default async function QuoteAdminPage() {
   const supabase = await createServerSupabaseClient()
@@ -39,6 +39,23 @@ export default async function QuoteAdminPage() {
     .order('type', { ascending: true })
     .order('vendor', { ascending: true })
 
+  // Fetch all assemblies with their components
+  const { data: assemblies } = await supabase
+    .from('assemblies')
+    .select(`
+      *,
+      assembly_components (
+        id,
+        quantity,
+        is_optional,
+        notes,
+        component:quote_components (*)
+      )
+    `)
+    .eq('is_active', true)
+    .order('category', { ascending: true })
+    .order('name', { ascending: true })
+
   const breadcrumbs = [
     { label: 'Dashboard', href: '/formiq' },
     { label: 'Quote Administration' }
@@ -51,11 +68,14 @@ export default async function QuoteAdminPage() {
           Quote Administration
         </h2>
         <p className="text-gray-600">
-          Manage quote components, pricing, and configurations.
+          Manage quote components, assemblies, and configurations.
         </p>
       </div>
 
-      <QuoteComponentsManager components={quoteComponents || []} />
+      <QuoteAdminTabs 
+        components={quoteComponents || []} 
+        assemblies={assemblies || []}
+      />
     </Layout>
   )
 } 

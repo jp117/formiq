@@ -5,42 +5,45 @@ export async function POST(request: Request) {
   try {
     const supabase = await createServerSupabaseClient()
     
-    // Check if user is authenticated and is admin or quote admin
+    // Check if user is authenticated
     const { data: { user } } = await supabase.auth.getUser()
-    
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Verify user is admin or quote admin
-    const { data: adminUser } = await supabase
+    // Check if user is admin or quote admin
+    const { data: userData } = await supabase
       .from('users')
-      .select('is_admin, is_quote_admin, is_approved')
+      .select('is_admin, is_quote_admin')
       .eq('id', user.id)
       .single()
 
-    if ((!adminUser?.is_admin && !adminUser?.is_quote_admin) || !adminUser?.is_approved) {
+    if (!userData?.is_admin && !userData?.is_quote_admin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    const component = await request.json()
+    const { type, vendor, catalog_number, description, cost } = await request.json()
 
     // Validate required fields
-    if (!component.type || !component.vendor || !component.catalog_number || 
-        !component.description || component.cost === undefined || component.sell_price === undefined) {
+    if (!type || !vendor || !catalog_number || !description || cost === undefined) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Insert the component
     const { data, error } = await supabase
       .from('quote_components')
-      .insert([component])
+      .insert({
+        type,
+        vendor,
+        catalog_number,
+        description,
+        cost
+      })
       .select()
       .single()
 
     if (error) {
-      console.error('Error inserting component:', error)
-      return NextResponse.json({ error: 'Failed to insert component' }, { status: 500 })
+      console.error('Error creating component:', error)
+      return NextResponse.json({ error: 'Failed to create component' }, { status: 500 })
     }
 
     return NextResponse.json(data)
@@ -54,31 +57,29 @@ export async function PATCH(request: Request) {
   try {
     const supabase = await createServerSupabaseClient()
     
-    // Check if user is authenticated and is admin or quote admin
+    // Check if user is authenticated
     const { data: { user } } = await supabase.auth.getUser()
-    
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Verify user is admin or quote admin
-    const { data: adminUser } = await supabase
+    // Check if user is admin or quote admin
+    const { data: userData } = await supabase
       .from('users')
-      .select('is_admin, is_quote_admin, is_approved')
+      .select('is_admin, is_quote_admin')
       .eq('id', user.id)
       .single()
 
-    if ((!adminUser?.is_admin && !adminUser?.is_quote_admin) || !adminUser?.is_approved) {
+    if (!userData?.is_admin && !userData?.is_quote_admin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { id, updates } = await request.json()
 
-    if (!id || !updates) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    if (!id) {
+      return NextResponse.json({ error: 'Component ID is required' }, { status: 400 })
     }
 
-    // Update the component
     const { data, error } = await supabase
       .from('quote_components')
       .update(updates)
@@ -102,31 +103,29 @@ export async function DELETE(request: Request) {
   try {
     const supabase = await createServerSupabaseClient()
     
-    // Check if user is authenticated and is admin or quote admin
+    // Check if user is authenticated
     const { data: { user } } = await supabase.auth.getUser()
-    
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Verify user is admin or quote admin
-    const { data: adminUser } = await supabase
+    // Check if user is admin or quote admin
+    const { data: userData } = await supabase
       .from('users')
-      .select('is_admin, is_quote_admin, is_approved')
+      .select('is_admin, is_quote_admin')
       .eq('id', user.id)
       .single()
 
-    if ((!adminUser?.is_admin && !adminUser?.is_quote_admin) || !adminUser?.is_approved) {
+    if (!userData?.is_admin && !userData?.is_quote_admin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { id } = await request.json()
 
     if (!id) {
-      return NextResponse.json({ error: 'Missing component ID' }, { status: 400 })
+      return NextResponse.json({ error: 'Component ID is required' }, { status: 400 })
     }
 
-    // Delete the component
     const { error } = await supabase
       .from('quote_components')
       .delete()

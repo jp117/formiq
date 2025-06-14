@@ -10,7 +10,6 @@ interface QuoteComponent {
   catalog_number: string
   description: string
   cost: number
-  sell_price: number
   created_at: string
   updated_at: string
 }
@@ -29,8 +28,7 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
     vendor: '',
     catalog_number: '',
     description: '',
-    cost: 0,
-    sell_price: 0
+    cost: 0
   })
 
   // Get unique types for tabs
@@ -57,8 +55,7 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
         vendor: '',
         catalog_number: '',
         description: '',
-        cost: 0,
-        sell_price: 0
+        cost: 0
       })
       setIsAdding(false)
       router.refresh()
@@ -145,7 +142,7 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
                 type="text"
                 value={newComponent.type}
                 onChange={(e) => setNewComponent({ ...newComponent, type: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 placeholder="e.g., ABB Switches"
               />
             </div>
@@ -155,7 +152,7 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
                 type="text"
                 value={newComponent.vendor}
                 onChange={(e) => setNewComponent({ ...newComponent, vendor: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 placeholder="e.g., ABB"
               />
             </div>
@@ -165,7 +162,7 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
                 type="text"
                 value={newComponent.catalog_number}
                 onChange={(e) => setNewComponent({ ...newComponent, catalog_number: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 placeholder="e.g., S201-C16"
               />
             </div>
@@ -175,7 +172,7 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
                 type="text"
                 value={newComponent.description}
                 onChange={(e) => setNewComponent({ ...newComponent, description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 placeholder="e.g., 16A Circuit Breaker"
               />
             </div>
@@ -185,23 +182,13 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
                 type="number"
                 step="0.01"
                 value={newComponent.cost}
-                onChange={(e) => setNewComponent({ ...newComponent, cost: parseFloat(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="0.00"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sell Price</label>
-              <input
-                type="number"
-                step="0.01"
-                value={newComponent.sell_price}
-                onChange={(e) => setNewComponent({ ...newComponent, sell_price: parseFloat(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setNewComponent({ ...newComponent, cost: parseFloat(e.target.value) || 0 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 placeholder="0.00"
               />
             </div>
           </div>
+          
           <div className="mt-4 flex justify-end space-x-3">
             <button
               onClick={() => setIsAdding(false)}
@@ -241,9 +228,6 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Cost
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Sell Price
-                </th>
                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
@@ -266,9 +250,6 @@ export default function QuoteComponentsManager({ components }: QuoteComponentsMa
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                     ${component.cost.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    ${component.sell_price.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                     <button
