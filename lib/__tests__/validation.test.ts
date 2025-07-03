@@ -212,7 +212,9 @@ describe('String Sanitization', () => {
   })
 
   test('should handle null/undefined input', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(sanitizeString(null as any)).toBe('')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(sanitizeString(undefined as any)).toBe('')
   })
 })

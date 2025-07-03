@@ -20,7 +20,11 @@ const formatDate = (dateString: string) => {
   return date.toLocaleDateString()
 }
 
-const getComponentStatus = (components: any[]) => {
+interface TestComponent {
+  received: boolean
+}
+
+const getComponentStatus = (components: TestComponent[]) => {
   if (components.length === 0) return 'No Components'
   const receivedCount = components.filter(c => c.received).length
   return `${receivedCount}/${components.length} Received`
@@ -147,7 +151,9 @@ describe('Export Utils', () => {
             po_number: 'PO-001',
             vendor: 'Vendor 1',
             components: [
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               { id: 'c1', received: true } as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               { id: 'c2', received: true } as any,
             ]
           }
@@ -164,7 +170,9 @@ describe('Export Utils', () => {
             po_number: 'PO-001',
             vendor: 'Vendor 1',
             components: [
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               { id: 'c1', received: true } as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               { id: 'c2', received: false } as any,
             ]
           }
@@ -180,13 +188,19 @@ describe('Export Utils', () => {
             id: 'po-1',
             po_number: 'PO-001',
             vendor: 'Vendor 1',
-            components: [{ id: 'c1', received: true } as any]
+            components: [
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              { id: 'c1', received: true } as any
+            ]
           },
           {
             id: 'po-2',
             po_number: 'PO-002', 
             vendor: 'Vendor 2',
-            components: [{ id: 'c2', received: false } as any]
+            components: [
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              { id: 'c2', received: false } as any
+            ]
           }
         ]
       })
@@ -201,19 +215,6 @@ describe('Export Utils', () => {
         nema_type: 'Type 3R',
         number_of_sections: 5,
       })
-
-      const expectedData = {
-        'Type': 'Switchboard',
-        'Designation': 'SB-TEST',
-        'Sales Order': 'SO-001',
-        'Customer': 'Test Customer',
-        'Job Name': 'Test Job',
-        'NEMA Type': 'Type 3R',
-        'Sections': 5,
-        'Dwg Rev': 'A',
-        'Status': 'In Progress',
-        'Ready to Ship': 'No',
-      }
 
       // Test individual properties
       expect(switchboard.designation).toBe('SB-TEST')
