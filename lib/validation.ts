@@ -5,7 +5,7 @@ export interface ValidationResult {
   error?: string
 }
 
-// Email validation with stricter rules
+// Email validation with comprehensive rules
 export function validateEmail(email: string): ValidationResult {
   if (!email || email.trim().length === 0) {
     return { isValid: false, error: 'Email is required' }
@@ -14,15 +14,104 @@ export function validateEmail(email: string): ValidationResult {
   // Trim and normalize
   const normalizedEmail = email.trim().toLowerCase()
 
-  // Stricter email regex
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-
-  if (!emailRegex.test(normalizedEmail)) {
-    return { isValid: false, error: 'Please enter a valid email address' }
-  }
-
   if (normalizedEmail.length > 254) {
     return { isValid: false, error: 'Email address is too long' }
+  }
+
+  // Check for spaces
+  if (normalizedEmail.includes(' ')) {
+    return { isValid: false, error: 'Email address cannot contain spaces' }
+  }
+
+  // Split into local and domain parts
+  const parts = normalizedEmail.split('@')
+  if (parts.length !== 2) {
+    return { isValid: false, error: 'Email must contain exactly one @ symbol' }
+  }
+
+  const [localPart, domainPart] = parts
+
+  // Validate local part (before @)
+  if (localPart.length === 0) {
+    return { isValid: false, error: 'Email must have a local part before @' }
+  }
+
+  if (localPart.length > 64) {
+    return { isValid: false, error: 'Email local part is too long' }
+  }
+
+  // Local part cannot start or end with dot or dash
+  if (localPart.startsWith('.') || localPart.endsWith('.')) {
+    return { isValid: false, error: 'Email local part cannot start or end with a dot' }
+  }
+
+  if (localPart.startsWith('-') || localPart.endsWith('-')) {
+    return { isValid: false, error: 'Email local part cannot start or end with a dash' }
+  }
+
+  // Local part cannot have consecutive dots
+  if (localPart.includes('..')) {
+    return { isValid: false, error: 'Email local part cannot contain consecutive dots' }
+  }
+
+  // Local part valid characters
+  if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/.test(localPart)) {
+    return { isValid: false, error: 'Email local part contains invalid characters' }
+  }
+
+  // Validate domain part (after @)
+  if (domainPart.length === 0) {
+    return { isValid: false, error: 'Email must have a domain part after @' }
+  }
+
+  if (domainPart.length > 253) {
+    return { isValid: false, error: 'Email domain is too long' }
+  }
+
+  // Domain cannot start or end with dot or dash
+  if (domainPart.startsWith('.') || domainPart.endsWith('.')) {
+    return { isValid: false, error: 'Email domain cannot start or end with a dot' }
+  }
+
+  if (domainPart.startsWith('-') || domainPart.endsWith('-')) {
+    return { isValid: false, error: 'Email domain cannot start or end with a dash' }
+  }
+
+  // Domain must have at least one dot (TLD required)
+  if (!domainPart.includes('.')) {
+    return { isValid: false, error: 'Email domain must include a top-level domain' }
+  }
+
+  // Split domain into labels
+  const domainLabels = domainPart.split('.')
+  
+  // Each domain label must be valid
+  for (const label of domainLabels) {
+    if (label.length === 0) {
+      return { isValid: false, error: 'Email domain cannot contain empty parts' }
+    }
+    
+    if (label.length > 63) {
+      return { isValid: false, error: 'Email domain label is too long' }
+    }
+    
+    if (label.startsWith('-') || label.endsWith('-')) {
+      return { isValid: false, error: 'Email domain labels cannot start or end with a dash' }
+    }
+    
+    if (!/^[a-zA-Z0-9-]+$/.test(label)) {
+      return { isValid: false, error: 'Email domain contains invalid characters' }
+    }
+  }
+
+  // TLD (last part) must be at least 2 characters and only letters
+  const tld = domainLabels[domainLabels.length - 1]
+  if (tld.length < 2) {
+    return { isValid: false, error: 'Email top-level domain must be at least 2 characters' }
+  }
+  
+  if (!/^[a-zA-Z]+$/.test(tld)) {
+    return { isValid: false, error: 'Email top-level domain must contain only letters' }
   }
 
   return { isValid: true }
