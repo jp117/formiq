@@ -13,6 +13,7 @@ interface User {
   is_quote_admin: boolean
   production_schedule_access: string
   frame_parts_access: string
+  quotes_access: string
   created_at: string
   company?: {
     company_name: string
@@ -206,6 +207,9 @@ export default function AdminContent({ users }: AdminContentProps) {
                   Frame Parts
                 </th>
                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Quotes
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -281,6 +285,19 @@ export default function AdminContent({ users }: AdminContentProps) {
                     <select
                       value={user.frame_parts_access}
                       onChange={(e) => handleUpdateUser(user.id, { frame_parts_access: e.target.value })}
+                      disabled={loading === user.id}
+                      className="text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded px-3 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <option value="no_access">No Access</option>
+                      <option value="view_access">View</option>
+                      <option value="edit_access">Edit</option>
+                      <option value="admin_access">Admin</option>
+                    </select>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <select
+                      value={user.quotes_access}
+                      onChange={(e) => handleUpdateUser(user.id, { quotes_access: e.target.value })}
                       disabled={loading === user.id}
                       className="text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded px-3 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >

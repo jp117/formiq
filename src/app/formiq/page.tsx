@@ -70,6 +70,25 @@ export default async function FormIQPage() {
           </Link>
         )}
 
+        {/* Quotes Card - Only show if user has access */}
+        {userData?.quotes_access && userData.quotes_access !== 'no_access' && (
+          <Link href="/formiq/quotes" className="block">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer">
+              <div className="flex items-center mb-4">
+                <div className="bg-orange-100 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="ml-3 text-lg font-semibold text-gray-900">Quotes</h3>
+              </div>
+              <p className="text-gray-600 text-sm">
+                Create and manage customer quotes for electrical equipment.
+              </p>
+            </div>
+          </Link>
+        )}
+
         {/* Quote Administration Card - Only show if user is admin or quote admin */}
         {(userData?.is_admin || userData?.is_quote_admin) && (
           <Link href="/formiq/quote-admin" className="block">
