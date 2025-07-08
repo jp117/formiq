@@ -1,3 +1,7 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
+
 interface QuoteCardProps {
   quote: {
     id: string
@@ -22,6 +26,22 @@ interface QuoteCardProps {
 }
 
 export default function QuoteCard({ quote }: QuoteCardProps) {
+  const router = useRouter()
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const path = `/formiq/quotes/${quote.id}`
+    
+    // Try router.push first, fallback to window.location
+    try {
+      router.push(path)
+    } catch (error) {
+      console.error('Router.push failed, using window.location:', error)
+      window.location.href = path
+    }
+  }
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -53,7 +73,10 @@ export default function QuoteCard({ quote }: QuoteCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer">
+    <div 
+      onClick={handleClick}
+      className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer"
+    >
       <div className="space-y-3">
         {/* Quote Number */}
         <div className="flex items-center justify-between">

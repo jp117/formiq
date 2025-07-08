@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface NewQuoteModalProps {
   isOpen: boolean
@@ -9,6 +10,7 @@ interface NewQuoteModalProps {
 }
 
 export default function NewQuoteModal({ isOpen, onClose, onQuoteCreated }: NewQuoteModalProps) {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     quoteName: '',
     dueDate: '',
@@ -68,15 +70,7 @@ export default function NewQuoteModal({ isOpen, onClose, onQuoteCreated }: NewQu
         throw new Error(data.error || 'Failed to create quote')
       }
 
-      // Show success message
-      alert(`Quote created successfully! Quote number: ${data.quote.quote_number}`)
-      
-      // Notify parent component
-      if (onQuoteCreated) {
-        onQuoteCreated()
-      }
-      
-      // Close modal and reset form
+      // Close modal and reset form first
       onClose()
       setFormData({
         quoteName: '',
@@ -85,6 +79,21 @@ export default function NewQuoteModal({ isOpen, onClose, onQuoteCreated }: NewQu
         domesticRequirements: '',
         wbeRequirements: ''
       })
+      
+      // Notify parent component
+      if (onQuoteCreated) {
+        onQuoteCreated()
+      }
+      
+      // Navigate to the new quote page
+      const path = `/formiq/quotes/${data.quote.id}`
+      
+      try {
+        router.push(path)
+      } catch (error) {
+        console.error('Router.push failed, using window.location:', error)
+        window.location.href = path
+      }
 
     } catch (error) {
       console.error('Error creating quote:', error)

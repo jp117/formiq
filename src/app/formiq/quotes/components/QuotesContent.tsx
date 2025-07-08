@@ -107,10 +107,7 @@ export default function QuotesContent() {
     )
   })
 
-  const handleQuoteCreated = () => {
-    // Refresh quotes after creating a new one
-    fetchQuotes(selectedCreator || undefined)
-  }
+
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -217,7 +214,6 @@ export default function QuotesContent() {
       <NewQuoteModal 
         isOpen={isNewQuoteModalOpen}
         onClose={() => setIsNewQuoteModalOpen(false)}
-        onQuoteCreated={handleQuoteCreated}
       />
     </div>
   )
