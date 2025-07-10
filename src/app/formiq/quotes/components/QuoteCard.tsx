@@ -16,6 +16,9 @@ interface QuoteCardProps {
     created_at: string
     updated_at: string
     created_by: string
+    version: string
+    parent_quote_id: string | null
+    version_notes: string | null
     creator: {
       id: string
       first_name: string
@@ -80,7 +83,15 @@ export default function QuoteCard({ quote }: QuoteCardProps) {
       <div className="space-y-3">
         {/* Quote Number */}
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">{quote.quote_number}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-gray-900">{quote.quote_number}</h3>
+            <span className="text-sm text-gray-500">{quote.version}</span>
+            {quote.parent_quote_id && (
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                REV
+              </span>
+            )}
+          </div>
           <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(quote.status)}`}>
             {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
           </span>

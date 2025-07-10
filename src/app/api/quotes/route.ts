@@ -57,7 +57,8 @@ export async function POST(request: NextRequest) {
         wbe_requirements: wbeRequirements,
         status: 'draft',
         total_amount: 0,
-        created_by: user.id
+        created_by: user.id,
+        version: 'Original'
       })
       .select()
       .single()
@@ -135,6 +136,9 @@ export async function GET(request: NextRequest) {
         created_at,
         updated_at,
         created_by,
+        version,
+        parent_quote_id,
+        version_notes,
         creator:users!created_by(
           id,
           first_name,

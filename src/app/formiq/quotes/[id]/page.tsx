@@ -54,7 +54,10 @@ export default async function QuotePage({ params }: QuotePageProps) {
       wbe_requirements,
       created_at,
       updated_at,
-      created_by
+      created_by,
+      version,
+      parent_quote_id,
+      version_notes
     `)
     .eq('id', resolvedParams.id)
     .eq('company_id', userData.company_id)

@@ -18,6 +18,9 @@ interface Quote {
   created_at: string
   updated_at: string
   created_by: string
+  version: string
+  parent_quote_id: string | null
+  version_notes: string | null
   creator: {
     id: string
     first_name: string
