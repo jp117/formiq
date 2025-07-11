@@ -112,7 +112,7 @@ export default function AddItemModal({ isOpen, onClose, quoteId }: AddItemModalP
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Add Quote Items</h2>
-              <p className="text-gray-600 mt-1">Choose how you'd like to configure items for this quote</p>
+              <p className="text-gray-600 mt-1">Choose how you&apos;d like to configure items for this quote</p>
             </div>
             <button
               onClick={onClose}
