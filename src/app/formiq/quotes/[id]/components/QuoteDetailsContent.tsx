@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import AddItemModal from './AddItemModal'
 
 interface Quote {
   id: string
@@ -56,6 +57,7 @@ export default function QuoteDetailsContent({ quote, userData }: QuoteDetailsCon
   })
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -461,7 +463,10 @@ export default function QuoteDetailsContent({ quote, userData }: QuoteDetailsCon
           <h2 className="text-xl font-semibold text-gray-900">Quote Items</h2>
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">Total: {formatCurrency(quote.total_amount)}</span>
-            <button className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+            <button
+              onClick={() => setIsAddItemModalOpen(true)}
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
               Add New Item
             </button>
           </div>
@@ -477,6 +482,13 @@ export default function QuoteDetailsContent({ quote, userData }: QuoteDetailsCon
           </p>
         </div>
       </div>
+      
+      {/* Add Item Modal */}
+      <AddItemModal
+        isOpen={isAddItemModalOpen}
+        onClose={() => setIsAddItemModalOpen(false)}
+        quoteId={quote.id}
+      />
     </div>
   )
 } 
