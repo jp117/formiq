@@ -263,6 +263,7 @@ export default function QuoteDetailsContent({ quote, userData }: QuoteDetailsCon
                           onClick={(e) => {
                             e.stopPropagation()
                             setIsEditing(true)
+                            setIsHeaderExpanded(true)
                           }}
                           className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                         >
