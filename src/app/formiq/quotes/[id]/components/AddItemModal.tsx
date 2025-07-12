@@ -94,13 +94,20 @@ export default function AddItemModal({ isOpen, onClose, quoteId }: AddItemModalP
 
   const handleOptionClick = (option: typeof configuratorOptions[0]) => {
     setIsNavigating(option.id)
-    // TODO: Navigate to the configurator route
-    console.log(`Navigating to: ${option.route}`)
-    // For now, just close the modal after a brief delay
-    setTimeout(() => {
-      setIsNavigating(null)
-      onClose()
-    }, 1000)
+    
+    // Navigate to the appropriate configurator
+    if (option.id === 'switchboard') {
+      // Navigate to switchboard configurator
+      window.location.href = option.route
+    } else {
+      // For other options, show a coming soon message
+      console.log(`Navigating to: ${option.route}`)
+      setTimeout(() => {
+        setIsNavigating(null)
+        onClose()
+        alert('This configurator is coming soon!')
+      }, 1000)
+    }
   }
 
   if (!isOpen) return null
