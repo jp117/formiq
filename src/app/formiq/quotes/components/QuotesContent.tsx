@@ -181,9 +181,6 @@ export default function QuotesContent() {
           <h2 className="text-xl font-semibold text-gray-900">
             {selectedCreator ? `Quotes by ${users.find(u => u.id === selectedCreator)?.first_name} ${users.find(u => u.id === selectedCreator)?.last_name}` : 'Recent Quotes'}
           </h2>
-          <span className="text-sm text-gray-500">
-            {filteredQuotes.length} quote{filteredQuotes.length !== 1 ? 's' : ''}
-          </span>
         </div>
         
         {/* Grid of Quote Cards */}
