@@ -1,6 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '../../../../../lib/supabase-server'
 
+interface CustomComponent {
+  component_id: string
+  quantity: number
+  is_optional: boolean
+  notes: string
+}
+
+interface SwitchboardConfiguration {
+  name: string
+  description: string
+  designation: string
+  nema_type: string
+  number_of_sections: number
+  quantity: number
+  notes: string
+  configuration_method: 'assembly' | 'custom'
+  selected_assembly_id: string | null
+  custom_components: CustomComponent[]
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient()
@@ -30,7 +50,11 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json()
-    const { quote_id, configuration, total_cost } = body
+    const { quote_id, configuration, total_cost }: {
+      quote_id: string
+      configuration: SwitchboardConfiguration
+      total_cost: number
+    } = body
 
     // Validate required fields
     if (!quote_id || !configuration) {
@@ -94,14 +118,14 @@ export async function POST(request: NextRequest) {
       const { data: componentData } = await supabase
         .from('quote_components')
         .select('*')
-        .in('id', configuration.custom_components.map((cc: any) => cc.component_id))
+        .in('id', configuration.custom_components.map((cc: CustomComponent) => cc.component_id))
 
       if (!componentData) {
         return NextResponse.json({ error: 'Failed to fetch component data' }, { status: 500 })
       }
 
       // Calculate components with proper pricing
-      const componentsWithPricing = configuration.custom_components.map((cc: any) => {
+      const componentsWithPricing = configuration.custom_components.map((cc: CustomComponent) => {
         const component = componentData.find(c => c.id === cc.component_id)
         if (!component) {
           throw new Error(`Component with ID ${cc.component_id} not found`)

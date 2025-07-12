@@ -92,7 +92,6 @@ export default async function SwitchboardConfiguratorPage({ params }: Switchboar
         quote={quote}
         assemblies={assemblies || []}
         components={components || []}
-        userData={userData}
       />
     </Layout>
   )

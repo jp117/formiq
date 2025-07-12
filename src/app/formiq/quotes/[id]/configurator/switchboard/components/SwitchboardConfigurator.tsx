@@ -39,22 +39,12 @@ interface Assembly {
   }>
 }
 
-interface UserData {
-  id: string
-  company_id: string
-  first_name: string
-  last_name: string
-  email: string
-  is_admin: boolean
-  is_quote_admin: boolean
-  quotes_access: string
-}
+
 
 interface SwitchboardConfiguratorProps {
   quote: Quote
   assemblies: Assembly[]
   components: QuoteComponent[]
-  userData: UserData
 }
 
 interface SwitchboardConfig {
@@ -81,8 +71,7 @@ interface SwitchboardConfig {
 export default function SwitchboardConfigurator({
   quote,
   assemblies,
-  components,
-  userData
+  components
 }: SwitchboardConfiguratorProps) {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<'method' | 'configure' | 'review'>('method')
@@ -128,34 +117,14 @@ export default function SwitchboardConfigurator({
     }
   }
 
-  const handleConfigChange = (field: keyof SwitchboardConfig, value: any) => {
+  const handleConfigChange = (field: keyof SwitchboardConfig, value: string | number) => {
     setConfig(prev => ({
       ...prev,
       [field]: value
     }))
   }
 
-  const handleAddComponent = (componentId: string, quantity: number = 1, isOptional: boolean = false) => {
-    setConfig(prev => ({
-      ...prev,
-      custom_components: [
-        ...prev.custom_components,
-        {
-          component_id: componentId,
-          quantity,
-          is_optional: isOptional,
-          notes: ''
-        }
-      ]
-    }))
-  }
 
-  const handleRemoveComponent = (index: number) => {
-    setConfig(prev => ({
-      ...prev,
-      custom_components: prev.custom_components.filter((_, i) => i !== index)
-    }))
-  }
 
   const calculateTotalCost = () => {
     let total = 0
