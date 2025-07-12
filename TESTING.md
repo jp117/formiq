@@ -89,6 +89,21 @@ Tests for UI component functionality:
 - ✅ Accessibility features
 - ✅ Error states
 
+### 5. Access Control Tests (`__tests__/access-control.test.ts`)
+Tests for security and authorization:
+- ✅ **Page Access Control**: Verifies users can only access authorized pages
+  - Admin pages restricted to admin users
+  - Quote admin pages restricted to quote admins
+  - Feature-specific pages (quotes, production schedule, frame parts) restricted by access levels
+- ✅ **API Route Authorization**: Ensures API endpoints enforce proper permissions
+  - Authentication checks for all protected routes
+  - Role-based access validation
+  - Proper error responses (401, 403) for unauthorized access
+- ✅ **Access Level Validation**: Tests granular permission levels
+  - `no_access`, `view_access`, `edit_access`, `admin_access` for each feature
+  - Cross-company data isolation
+  - Multi-role user handling
+
 ## Test Patterns and Best Practices
 
 ### Test Data Factories
@@ -134,6 +149,7 @@ expect(result).toMatch(/pattern/)
 - 🔄 **API Routes**: Authentication, CRUD operations
 - 🔄 **Integration Tests**: Database operations with test DB
 - 🔄 **Page Components**: Full page rendering tests
+- ✅ **Access Control Tests**: Page access verification (framework created)
 
 ### Lower Priority
 - 🔄 **E2E Tests**: Full user workflow testing
@@ -166,6 +182,9 @@ expect(result).toMatch(/pattern/)
 - Input validation prevents malicious data
 - Rate limiting prevents abuse
 - XSS protection through sanitization
+- **Access control testing** ensures unauthorized users cannot access protected resources
+- **Role-based permission validation** prevents privilege escalation
+- **Multi-tenant isolation** prevents cross-company data access
 
 ### 🐛 **Bug Prevention**
 - Business logic errors caught early
@@ -184,11 +203,25 @@ expect(result).toMatch(/pattern/)
 
 ## Next Steps
 
-1. **Add API Route Tests**: Test your Supabase operations
-2. **Increase Component Coverage**: Test more complex UI components
-3. **Set up CI/CD**: Run tests automatically on PR/merge
-4. **Add Performance Tests**: Test with large datasets
-5. **E2E Testing**: Consider Playwright or Cypress for full workflow testing
+1. **Complete Access Control Tests**: Replace placeholder tests with actual implementations
+   - Test page redirects using Next.js testing utilities
+   - Test API route responses with proper request/response mocking
+   - Implement integration tests with test database
+2. **Add API Route Tests**: Test your Supabase operations
+3. **Increase Component Coverage**: Test more complex UI components
+4. **Set up CI/CD**: Run tests automatically on PR/merge
+5. **Add Performance Tests**: Test with large datasets
+6. **E2E Testing**: Consider Playwright or Cypress for full workflow testing
+
+### Priority: Access Control Test Implementation
+
+The access control test framework has been created, but needs actual implementation. This is **HIGH PRIORITY** for security:
+
+1. **Replace placeholders** with actual page/API testing
+2. **Add integration tests** with test database
+3. **Test middleware behavior** for route protection
+4. **Validate RLS policies** work correctly
+5. **Test edge cases** like expired sessions, malformed tokens
 
 ## Test-Driven Development (TDD)
 
