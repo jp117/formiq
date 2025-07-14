@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '../../../../../../../lib/supabase-server'
-import Layout from '../../../../components/Layout'
 import SwitchboardConfigurator from './components/SwitchboardConfigurator'
 
 interface SwitchboardConfiguratorPageProps {
@@ -79,20 +78,11 @@ export default async function SwitchboardConfiguratorPage({ params }: Switchboar
     .order('type', { ascending: true })
     .order('vendor', { ascending: true })
 
-  const breadcrumbs = [
-    { label: 'Dashboard', href: '/formiq' },
-    { label: 'Quotes', href: '/formiq/quotes' },
-    { label: `Quote ${quote.quote_number}`, href: `/formiq/quotes/${quote.id}` },
-    { label: 'Switchboard Configurator' }
-  ]
-
   return (
-    <Layout userData={userData} breadcrumbs={breadcrumbs}>
-      <SwitchboardConfigurator
-        quote={quote}
-        assemblies={assemblies || []}
-        components={components || []}
-      />
-    </Layout>
+    <SwitchboardConfigurator
+      quote={quote}
+      assemblies={assemblies || []}
+      components={components || []}
+    />
   )
 } 
