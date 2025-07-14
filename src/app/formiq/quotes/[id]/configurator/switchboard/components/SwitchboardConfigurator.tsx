@@ -47,8 +47,8 @@ interface SwitchboardConfiguratorProps {
 
 export default function SwitchboardConfigurator({
   quote,
-  assemblies,
-  components
+  assemblies: _assemblies, // eslint-disable-line @typescript-eslint/no-unused-vars
+  components: _components // eslint-disable-line @typescript-eslint/no-unused-vars
 }: SwitchboardConfiguratorProps) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<'lineup' | 'configuration'>('lineup')
