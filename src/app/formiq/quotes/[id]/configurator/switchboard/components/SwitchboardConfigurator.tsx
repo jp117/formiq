@@ -2,6 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import BasicInfoSection from './BasicInfoSection'
+import RatingsSection from './RatingsSection'
+import IncomingOrientationSection from './IncomingOrientationSection'
+import BusSection from './BusSection'
+import EnclosureSpecialsSection from './EnclosureSpecialsSection'
 
 interface Quote {
   id: string
@@ -52,6 +57,42 @@ export default function SwitchboardConfigurator({
 }: SwitchboardConfiguratorProps) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<'lineup' | 'configuration'>('lineup')
+
+  // Form state for lineup tab - removed MTM Interlock, Hi Leg, cUL
+  const [formData, setFormData] = useState({
+    marks: '',
+    switchboardType: 'Configured Switchboard',
+    panelType: 'ReliaGear (C/B feeders only)',
+    application: 'Main Disconnect',
+    voltage: '480/277 AC',
+    phaseWireHz: '3/4/60',
+    icRating: '65',
+    busBracing: '65',
+    ratingType: 'fully',
+    serviceEntrance: false,
+    amps: '1200',
+    feedType: 'Lugs/Cable',
+    feedLocation: 'top',
+    sectionAlignment: 'front-rear',
+    incomingLocation: 'left',
+    buildAmericaBuyAmerica: false,
+    material: 'Aluminum',
+    busPlating: 'Tin Plate',
+    busDensity: '750 A/Sq. in.',
+    neutralRating: '100% Rated',
+    busRating: 'fully-rated',
+    enclosureType: 'Type 1',
+    access: 'Front Only',
+    height: '90"',
+    requiresServiceDisconnect: false
+  })
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
 
   const handleSave = () => {
     // TODO: Implement save logic
@@ -132,8 +173,71 @@ export default function SwitchboardConfigurator({
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             {activeTab === 'lineup' && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">Lineup</h2>
-                <p className="text-gray-500">Lineup content will go here...</p>
+                {/* Basic Info - Full Width */}
+                <BasicInfoSection
+                  formData={{
+                    marks: formData.marks,
+                    switchboardType: formData.switchboardType,
+                    panelType: formData.panelType,
+                    application: formData.application,
+                    buildAmericaBuyAmerica: formData.buildAmericaBuyAmerica
+                  }}
+                  onInputChange={handleInputChange}
+                />
+
+                {/* First Two Column Grid - Ratings and Incoming & Orientation */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch mb-8">
+                  {/* Left Column - Ratings */}
+                  <RatingsSection
+                    formData={{
+                      voltage: formData.voltage,
+                      phaseWireHz: formData.phaseWireHz,
+                      icRating: formData.icRating,
+                      busBracing: formData.busBracing,
+                      ratingType: formData.ratingType,
+                      serviceEntrance: formData.serviceEntrance
+                    }}
+                    onInputChange={handleInputChange}
+                  />
+
+                  {/* Right Column - Incoming and Orientation */}
+                  <IncomingOrientationSection
+                    formData={{
+                      amps: formData.amps,
+                      feedType: formData.feedType,
+                      feedLocation: formData.feedLocation,
+                      sectionAlignment: formData.sectionAlignment,
+                      incomingLocation: formData.incomingLocation
+                    }}
+                    onInputChange={handleInputChange}
+                  />
+                </div>
+
+                {/* Second Two Column Grid - Bus and Enclosure & Specials */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                  {/* Left Column - Bus */}
+                  <BusSection
+                    formData={{
+                      material: formData.material,
+                      busPlating: formData.busPlating,
+                      busDensity: formData.busDensity,
+                      neutralRating: formData.neutralRating,
+                      busRating: formData.busRating
+                    }}
+                    onInputChange={handleInputChange}
+                  />
+
+                  {/* Right Column - Enclosure and Specials */}
+                  <EnclosureSpecialsSection
+                    formData={{
+                      enclosureType: formData.enclosureType,
+                      access: formData.access,
+                      height: formData.height,
+                      requiresServiceDisconnect: formData.requiresServiceDisconnect
+                    }}
+                    onInputChange={handleInputChange}
+                  />
+                </div>
               </div>
             )}
             
@@ -148,4 +252,4 @@ export default function SwitchboardConfigurator({
       </div>
     </div>
   )
-} 
+}
