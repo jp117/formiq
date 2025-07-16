@@ -40,7 +40,6 @@ export default function BasicInfoSection({ formData, onInputChange }: BasicInfoS
             onChange={(e) => onInputChange('switchboardType', e.target.value)}
             className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
           >
-            <option value="Configured Switchboard">Configured Switchboard</option>
             <option value="Engineered Switchboard">Engineered Switchboard</option>
           </select>
         </div>
@@ -50,15 +49,14 @@ export default function BasicInfoSection({ formData, onInputChange }: BasicInfoS
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Panel Type
           </label>
-          <select
-            value={formData.panelType}
-            onChange={(e) => onInputChange('panelType', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-          >
-            <option value="ReliaGear (C/B feeders only)">ReliaGear (C/B feeders only)</option>
-            <option value="Standard Panel">Standard Panel</option>
-            <option value="Custom Panel">Custom Panel</option>
-          </select>
+                      <select
+              value={formData.panelType}
+              onChange={(e) => onInputChange('panelType', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
+            >
+              <option value="ReliaGear (CB Feeders)">ReliaGear (CB Feeders)</option>
+              <option value="ADS Fusible (Sw feeders)">ADS Fusible (Sw feeders)</option>
+            </select>
         </div>
 
         {/* Application */}
@@ -72,8 +70,10 @@ export default function BasicInfoSection({ formData, onInputChange }: BasicInfoS
             className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
           >
             <option value="Main Disconnect">Main Disconnect</option>
-            <option value="Distribution">Distribution</option>
-            <option value="Transfer Switch">Transfer Switch</option>
+            <option value="Service Disconnect (Max 6)">Service Disconnect (Max 6)</option>
+            <option value="Main Tie Main">Main Tie Main</option>
+            <option value="Feeders Only">Feeders Only</option>
+            <option value="Other">Other</option>
           </select>
         </div>
 

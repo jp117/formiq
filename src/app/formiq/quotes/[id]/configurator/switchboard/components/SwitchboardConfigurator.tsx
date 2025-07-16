@@ -61,8 +61,8 @@ export default function SwitchboardConfigurator({
   // Form state for lineup tab - removed MTM Interlock, Hi Leg, cUL
   const [formData, setFormData] = useState({
     marks: '',
-    switchboardType: 'Configured Switchboard',
-    panelType: 'ReliaGear (C/B feeders only)',
+    switchboardType: 'Engineered Switchboard',
+    panelType: 'ReliaGear (CB Feeders)',
     application: 'Main Disconnect',
     voltage: '480/277 AC',
     phaseWireHz: '3/4/60',
