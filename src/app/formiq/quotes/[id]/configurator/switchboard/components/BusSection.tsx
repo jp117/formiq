@@ -78,8 +78,7 @@ export default function BusSection({ formData, onInputChange }: BusSectionProps)
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
               <option value="100% Rated">100% Rated</option>
-              <option value="80% Rated">80% Rated</option>
-              <option value="50% Rated">50% Rated</option>
+              <option value="200% Rated">200% Rated</option>
             </select>
           </div>
         </div>
