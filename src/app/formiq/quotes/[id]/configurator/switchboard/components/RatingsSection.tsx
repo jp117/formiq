@@ -24,11 +24,27 @@ const voltageMapping: Record<string, string> = {
 }
 
 export default function RatingsSection({ formData, onInputChange }: RatingsSectionProps) {
+  // Available Bus Bracing options (only 3 options)
+  const busBracingOptions = [65, 100, 200]
+
   const handleVoltageChange = (voltage: string) => {
     onInputChange('voltage', voltage)
     // Automatically populate Phase/Wire/Hz based on voltage selection
     const phaseWireHz = voltageMapping[voltage] || ''
     onInputChange('phaseWireHz', phaseWireHz)
+  }
+
+  const handleIcRatingChange = (icRating: string) => {
+    onInputChange('icRating', icRating)
+    
+    // Auto-select minimum valid Bus Bracing (user can still override to higher value)
+    if (icRating) {
+      const icRatingValue = parseInt(icRating)
+      const minValidBusBracing = busBracingOptions.find(option => option >= icRatingValue)
+      if (minValidBusBracing) {
+        onInputChange('busBracing', minValidBusBracing.toString())
+      }
+    }
   }
 
   return (
@@ -85,11 +101,23 @@ export default function RatingsSection({ formData, onInputChange }: RatingsSecti
             </label>
             <select
               value={formData.icRating}
-              onChange={(e) => onInputChange('icRating', e.target.value)}
+              onChange={(e) => handleIcRatingChange(e.target.value)}
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
+              <option value="">Select AIC</option>
+              <option value="10">10</option>
+              <option value="14">14</option>
+              <option value="18">18</option>
+              <option value="22">22</option>
+              <option value="25">25</option>
+              <option value="30">30</option>
+              <option value="35">35</option>
+              <option value="42">42</option>
+              <option value="50">50</option>
               <option value="65">65</option>
+              <option value="85">85</option>
               <option value="100">100</option>
+              <option value="150">150</option>
               <option value="200">200</option>
             </select>
           </div>
@@ -104,6 +132,7 @@ export default function RatingsSection({ formData, onInputChange }: RatingsSecti
               onChange={(e) => onInputChange('busBracing', e.target.value)}
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
+              <option value="">Select Bus Bracing</option>
               <option value="65">65</option>
               <option value="100">100</option>
               <option value="200">200</option>
