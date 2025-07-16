@@ -20,7 +20,7 @@ export default function BusSection({ formData, onInputChange }: BusSectionProps)
       <div className="flex-1 space-y-4 p-4 border border-gray-200 rounded-b-md">
         {/* First Row - Material, Bus Plating, Bus Density */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Material */}
+          {/* Material - Copper only */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Material
@@ -30,26 +30,26 @@ export default function BusSection({ formData, onInputChange }: BusSectionProps)
               onChange={(e) => onInputChange('material', e.target.value)}
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
-              <option value="Aluminum">Aluminum</option>
               <option value="Copper">Copper</option>
             </select>
           </div>
 
-          {/* Bus Plating */}
+          {/* Bus Plating - Dropdown with Silver default and Tin option */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Bus Plating
             </label>
-            <input
-              type="text"
+            <select
               value={formData.busPlating}
               onChange={(e) => onInputChange('busPlating', e.target.value)}
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-              placeholder="Tin Plate"
-            />
+            >
+              <option value="Silver">Silver</option>
+              <option value="Tin">Tin</option>
+            </select>
           </div>
 
-          {/* Bus Density */}
+          {/* Bus Density - 700 and 1000 with 1000 default */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Bus Density
@@ -59,9 +59,8 @@ export default function BusSection({ formData, onInputChange }: BusSectionProps)
               onChange={(e) => onInputChange('busDensity', e.target.value)}
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
-              <option value="750 A/Sq. in.">750 A/Sq. in.</option>
+              <option value="700 A/Sq. in.">700 A/Sq. in.</option>
               <option value="1000 A/Sq. in.">1000 A/Sq. in.</option>
-              <option value="1200 A/Sq. in.">1200 A/Sq. in.</option>
             </select>
           </div>
         </div>
