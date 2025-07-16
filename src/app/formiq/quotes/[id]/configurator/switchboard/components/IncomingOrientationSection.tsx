@@ -54,8 +54,10 @@ export default function IncomingOrientationSection({ formData, onInputChange }: 
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
               <option value="Lugs/Cable">Lugs/Cable</option>
+              <option value="Blank Pull Section">Blank Pull Section</option>
+              <option value="Bussed Pull Section">Bussed Pull Section</option>
               <option value="Busway">Busway</option>
-              <option value="Conduit">Conduit</option>
+              <option value="Tied to Transformer">Tied to Transformer</option>
             </select>
           </div>
         </div>
