@@ -82,7 +82,7 @@ export default function SwitchboardConfigurator({
     neutralRating: '100% Rated',
     busRating: 'fully-rated',
     enclosureType: 'Type 1',
-    access: 'Front Only',
+    access: 'Front',
     height: '90"',
     requiresServiceDisconnect: false
   })

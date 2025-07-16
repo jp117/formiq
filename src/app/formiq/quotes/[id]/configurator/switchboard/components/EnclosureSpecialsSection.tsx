@@ -30,10 +30,7 @@ export default function EnclosureSpecialsSection({ formData, onInputChange }: En
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
               <option value="Type 1">Type 1</option>
-              <option value="Type 2">Type 2</option>
               <option value="Type 3R">Type 3R</option>
-              <option value="Type 4">Type 4</option>
-              <option value="Type 12">Type 12</option>
             </select>
           </div>
 
@@ -47,9 +44,8 @@ export default function EnclosureSpecialsSection({ formData, onInputChange }: En
               onChange={(e) => onInputChange('access', e.target.value)}
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
-              <option value="Front Only">Front Only</option>
+              <option value="Front">Front</option>
               <option value="Front and Rear">Front and Rear</option>
-              <option value="Rear Only">Rear Only</option>
             </select>
           </div>
         </div>
