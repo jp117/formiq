@@ -37,6 +37,9 @@ export default function IncomingOrientationSection({ formData, onInputChange }: 
               <option value="1200">1200</option>
               <option value="1600">1600</option>
               <option value="2000">2000</option>
+              <option value="2500">2500</option>
+              <option value="3000">3000</option>
+              <option value="4000">4000</option>
             </select>
           </div>
 
