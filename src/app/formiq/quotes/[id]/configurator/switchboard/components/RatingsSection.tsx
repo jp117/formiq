@@ -12,7 +12,25 @@ interface RatingsSectionProps {
   onInputChange: (field: string, value: string | boolean) => void
 }
 
+// Voltage to Phase/Wire/Hz mapping based on the provided image
+const voltageMapping: Record<string, string> = {
+  '480/277 AC': '3/4/60',
+  '208/120 AC': '3/4/60', 
+  '240 AC': '3/3/60',
+  '240/120 AC': '3/4/60',
+  '480 AC': '3/3/60',
+  '600 AC': '3/3/60',
+  '600/347 AC': '3/4/60'
+}
+
 export default function RatingsSection({ formData, onInputChange }: RatingsSectionProps) {
+  const handleVoltageChange = (voltage: string) => {
+    onInputChange('voltage', voltage)
+    // Automatically populate Phase/Wire/Hz based on voltage selection
+    const phaseWireHz = voltageMapping[voltage] || ''
+    onInputChange('phaseWireHz', phaseWireHz)
+  }
+
   return (
     <div className="h-full flex flex-col">
       <div className="bg-slate-700 text-white px-4 py-2 rounded-t-md">
@@ -28,17 +46,21 @@ export default function RatingsSection({ formData, onInputChange }: RatingsSecti
             </label>
             <select
               value={formData.voltage}
-              onChange={(e) => onInputChange('voltage', e.target.value)}
+              onChange={(e) => handleVoltageChange(e.target.value)}
               className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
+              <option value="">Select Voltage</option>
               <option value="480/277 AC">480/277 AC</option>
               <option value="208/120 AC">208/120 AC</option>
+              <option value="240 AC">240 AC</option>
               <option value="240/120 AC">240/120 AC</option>
+              <option value="480 AC">480 AC</option>
+              <option value="600 AC">600 AC</option>
               <option value="600/347 AC">600/347 AC</option>
             </select>
           </div>
 
-          {/* Phase/Wire/Hz */}
+          {/* Phase/Wire/Hz - Now disabled and auto-populated */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Phase/Wire/Hz
@@ -46,9 +68,10 @@ export default function RatingsSection({ formData, onInputChange }: RatingsSecti
             <input
               type="text"
               value={formData.phaseWireHz}
-              onChange={(e) => onInputChange('phaseWireHz', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-              placeholder="3/4/60"
+              readOnly
+              disabled
+              className="w-full px-3 py-2 border border-gray-400 rounded-md bg-gray-100 text-gray-700 cursor-not-allowed"
+              placeholder="Auto-filled based on voltage"
             />
           </div>
         </div>
