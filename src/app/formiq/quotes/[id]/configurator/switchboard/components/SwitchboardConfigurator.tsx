@@ -7,6 +7,9 @@ import RatingsSection from './RatingsSection'
 import IncomingOrientationSection from './IncomingOrientationSection'
 import BusSection from './BusSection'
 import EnclosureSpecialsSection from './EnclosureSpecialsSection'
+import UtilityInfoSection from './UtilityInfoSection'
+import ConnectionSpecsSection from './ConnectionSpecsSection'
+import LoadRequirementsSection from './LoadRequirementsSection'
 
 interface Quote {
   id: string
@@ -56,7 +59,7 @@ export default function SwitchboardConfigurator({
   components: _components // eslint-disable-line @typescript-eslint/no-unused-vars
 }: SwitchboardConfiguratorProps) {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'lineup' | 'configuration'>('lineup')
+  const [activeTab, setActiveTab] = useState<'lineup' | 'utility' | 'configuration'>('lineup')
 
   // Form state for lineup tab - removed MTM Interlock, Hi Leg, cUL
   const [formData, setFormData] = useState({
@@ -84,7 +87,24 @@ export default function SwitchboardConfigurator({
     enclosureType: 'Type 1',
     access: 'Front',
     height: '90"',
-    requiresServiceDisconnect: false
+    requiresServiceDisconnect: false,
+    // Utility form data
+    utilityCompany: '',
+    accountNumber: '',
+    serviceClass: '',
+    meterType: '',
+    billingDemand: '',
+    connectionType: '',
+    wireSize: '',
+    conduitSize: '',
+    groundingMethod: '',
+    transformerConnection: false,
+    loadType: '',
+    diversityFactor: '',
+    demandFactor: '',
+    powerFactor: '',
+    totalConnectedLoad: '',
+    peakDemand: ''
   })
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -154,6 +174,16 @@ export default function SwitchboardConfigurator({
               }`}
             >
               Lineup
+            </button>
+            <button
+              onClick={() => setActiveTab('utility')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'utility'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Utility
             </button>
             <button
               onClick={() => setActiveTab('configuration')}
@@ -234,6 +264,50 @@ export default function SwitchboardConfigurator({
                       access: formData.access,
                       height: formData.height,
                       requiresServiceDisconnect: formData.requiresServiceDisconnect
+                    }}
+                    onInputChange={handleInputChange}
+                  />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'utility' && (
+              <div>
+                {/* Utility Info - Full Width */}
+                <UtilityInfoSection
+                  formData={{
+                    utilityCompany: formData.utilityCompany,
+                    accountNumber: formData.accountNumber,
+                    serviceClass: formData.serviceClass,
+                    meterType: formData.meterType,
+                    billingDemand: formData.billingDemand
+                  }}
+                  onInputChange={handleInputChange}
+                />
+
+                {/* Two Column Grid - Connection Specs and Load Requirements */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                  {/* Left Column - Connection Specifications */}
+                  <ConnectionSpecsSection
+                    formData={{
+                      connectionType: formData.connectionType,
+                      wireSize: formData.wireSize,
+                      conduitSize: formData.conduitSize,
+                      groundingMethod: formData.groundingMethod,
+                      transformerConnection: formData.transformerConnection
+                    }}
+                    onInputChange={handleInputChange}
+                  />
+
+                  {/* Right Column - Load Requirements */}
+                  <LoadRequirementsSection
+                    formData={{
+                      loadType: formData.loadType,
+                      diversityFactor: formData.diversityFactor,
+                      demandFactor: formData.demandFactor,
+                      powerFactor: formData.powerFactor,
+                      totalConnectedLoad: formData.totalConnectedLoad,
+                      peakDemand: formData.peakDemand
                     }}
                     onInputChange={handleInputChange}
                   />
