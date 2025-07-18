@@ -7,9 +7,17 @@ import RatingsSection from './RatingsSection'
 import IncomingOrientationSection from './IncomingOrientationSection'
 import BusSection from './BusSection'
 import EnclosureSpecialsSection from './EnclosureSpecialsSection'
-import UtilityInfoSection from './UtilityInfoSection'
-import ConnectionSpecsSection from './ConnectionSpecsSection'
-import LoadRequirementsSection from './LoadRequirementsSection'
+import UtilityContentSection from './UtilityContentSection'
+
+interface UtilityItem {
+  id: string
+  displayName: string
+  utilityType: string
+  quantity: number
+  utilityCode: string
+  amps: string
+  sequence: string
+}
 
 interface Quote {
   id: string
@@ -89,25 +97,41 @@ export default function SwitchboardConfigurator({
     height: '90"',
     requiresServiceDisconnect: false,
     // Utility form data
-    utilityCompany: '',
-    accountNumber: '',
-    serviceClass: '',
-    meterType: '',
-    billingDemand: '',
-    connectionType: '',
-    wireSize: '',
-    conduitSize: '',
-    groundingMethod: '',
-    transformerConnection: false,
-    loadType: '',
-    diversityFactor: '',
-    demandFactor: '',
-    powerFactor: '',
-    totalConnectedLoad: '',
-    peakDemand: ''
+    utilityItems: [],
+    selectedUtilityType: 'EUSERC' as 'EUSERC' | 'All Others',
+    currentItem: {
+      qty: '1',
+      name: '',
+      amps: '',
+      sequence: ''
+    },
+    lineConnection: {
+      feedType: '',
+      lugType: '',
+      cableMaterial: '',
+      cableSize: '',
+      cablesPerPhase: '',
+      utilityTermination: false
+    },
+    loadConnection: {
+      loadType: '',
+      lugType: '',
+      cableMaterial: '',
+      loadExit: '',
+      cableSize: '',
+      cablesPerPhase: ''
+    },
+    utilitySpecs: {
+      sockets: '',
+      figure: '',
+      clips: '',
+      currentTransformerType: '',
+      ptCompartmentHeight: '',
+      potentialTransformers: false
+    }
   })
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: string, value: string | boolean | UtilityItem[] | Record<string, string | boolean>) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -273,45 +297,17 @@ export default function SwitchboardConfigurator({
 
             {activeTab === 'utility' && (
               <div>
-                {/* Utility Info - Full Width */}
-                <UtilityInfoSection
+                <UtilityContentSection
                   formData={{
-                    utilityCompany: formData.utilityCompany,
-                    accountNumber: formData.accountNumber,
-                    serviceClass: formData.serviceClass,
-                    meterType: formData.meterType,
-                    billingDemand: formData.billingDemand
+                    utilityItems: formData.utilityItems,
+                    selectedUtilityType: formData.selectedUtilityType,
+                    currentItem: formData.currentItem,
+                    lineConnection: formData.lineConnection,
+                    loadConnection: formData.loadConnection,
+                    utilitySpecs: formData.utilitySpecs
                   }}
                   onInputChange={handleInputChange}
                 />
-
-                {/* Two Column Grid - Connection Specs and Load Requirements */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-                  {/* Left Column - Connection Specifications */}
-                  <ConnectionSpecsSection
-                    formData={{
-                      connectionType: formData.connectionType,
-                      wireSize: formData.wireSize,
-                      conduitSize: formData.conduitSize,
-                      groundingMethod: formData.groundingMethod,
-                      transformerConnection: formData.transformerConnection
-                    }}
-                    onInputChange={handleInputChange}
-                  />
-
-                  {/* Right Column - Load Requirements */}
-                  <LoadRequirementsSection
-                    formData={{
-                      loadType: formData.loadType,
-                      diversityFactor: formData.diversityFactor,
-                      demandFactor: formData.demandFactor,
-                      powerFactor: formData.powerFactor,
-                      totalConnectedLoad: formData.totalConnectedLoad,
-                      peakDemand: formData.peakDemand
-                    }}
-                    onInputChange={handleInputChange}
-                  />
-                </div>
               </div>
             )}
             
