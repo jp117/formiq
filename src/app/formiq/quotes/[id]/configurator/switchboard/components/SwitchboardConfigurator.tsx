@@ -8,6 +8,7 @@ import IncomingOrientationSection from './IncomingOrientationSection'
 import BusSection from './BusSection'
 import EnclosureSpecialsSection from './EnclosureSpecialsSection'
 import UtilityContentSection from './UtilityContentSection'
+import IncomingServiceDisconnectSection from './IncomingServiceDisconnectSection'
 
 interface UtilityItem {
   id: string
@@ -17,6 +18,20 @@ interface UtilityItem {
   utilityCode: string
   amps: string
   sequence: string
+}
+
+interface DisconnectDevice {
+  id: string
+  displayName: string
+  quantity: number
+  deviceType: string
+  construction: string
+  tripAmps: number
+  poles: number
+  frame: string
+  sensor: string
+  hundredPercent: boolean
+  operation: string
 }
 
 interface Quote {
@@ -67,7 +82,7 @@ export default function SwitchboardConfigurator({
   components: _components // eslint-disable-line @typescript-eslint/no-unused-vars
 }: SwitchboardConfiguratorProps) {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'lineup' | 'utility' | 'configuration'>('lineup')
+  const [activeTab, setActiveTab] = useState<'lineup' | 'utility' | 'incoming-service-disconnect' | 'configuration'>('lineup')
 
   // Form state for lineup tab - removed MTM Interlock, Hi Leg, cUL
   const [formData, setFormData] = useState({
@@ -97,7 +112,7 @@ export default function SwitchboardConfigurator({
     height: '90"',
     requiresServiceDisconnect: false,
     // Utility form data
-    utilityItems: [],
+    utilityItems: [] as UtilityItem[],
     selectedUtilityType: 'EUSERC' as 'EUSERC' | 'All Others',
     currentItem: {
       qty: '1',
@@ -128,10 +143,54 @@ export default function SwitchboardConfigurator({
       currentTransformerType: '',
       ptCompartmentHeight: '',
       potentialTransformers: false
+    },
+    // Incoming Service Disconnect form data
+    disconnectDevices: [] as DisconnectDevice[],
+    incomingServiceDisconnect: {
+      application: '',
+      fuseType: '',
+      deviceAssociation: '',
+      sdLocation: '',
+      lineConnection: {
+        feedType: '',
+        lugType: '',
+        cableMaterial: '',
+        strapType: '',
+        cableSize: '',
+        cablesPerPhase: ''
+      },
+      loadConnection: {
+        loadType: '',
+        lugType: '',
+        cableMaterial: '',
+        strapType: '',
+        cableSize: '',
+        cablesPerPhase: '',
+        loadExit: '',
+        allowLoadBusWithNoLoadDevices: false
+      },
+      protectionFeatures: {
+        phaseFailure: false,
+        capTrip: false,
+        geItiBgflGfRelay: false,
+        multiStack: false,
+        provideFuses: false,
+        subMeteringRgm4500q: false
+      },
+      programmer: {
+        mode: '' as 'instantaneous' | 'fuse-only' | 'none' | '',
+        longTime: false,
+        shortTime: false,
+        relt: false,
+        groundFault: false,
+        neutralProtection: false,
+        rgZoneSelectiveInterlock: false,
+        type: 'EKIP Touch'
+      }
     }
   })
 
-  const handleInputChange = (field: string, value: string | boolean | UtilityItem[] | Record<string, string | boolean>) => {
+  const handleInputChange = (field: string, value: unknown) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -208,6 +267,16 @@ export default function SwitchboardConfigurator({
               }`}
             >
               Utility
+            </button>
+            <button
+              onClick={() => setActiveTab('incoming-service-disconnect')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'incoming-service-disconnect'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Incoming Service Disconnect
             </button>
             <button
               onClick={() => setActiveTab('configuration')}
@@ -307,6 +376,39 @@ export default function SwitchboardConfigurator({
                     utilitySpecs: formData.utilitySpecs
                   }}
                   onInputChange={handleInputChange}
+                />
+              </div>
+            )}
+
+            {activeTab === 'incoming-service-disconnect' && (
+              <div>
+                <IncomingServiceDisconnectSection
+                  formData={{
+                    disconnectDevices: formData.disconnectDevices,
+                    application: formData.incomingServiceDisconnect.application,
+                    fuseType: formData.incomingServiceDisconnect.fuseType,
+                    deviceAssociation: formData.incomingServiceDisconnect.deviceAssociation,
+                    sdLocation: formData.incomingServiceDisconnect.sdLocation,
+                    lineConnection: formData.incomingServiceDisconnect.lineConnection,
+                    loadConnection: formData.incomingServiceDisconnect.loadConnection,
+                    protectionFeatures: formData.incomingServiceDisconnect.protectionFeatures,
+                    programmer: formData.incomingServiceDisconnect.programmer
+                  }}
+                  onInputChange={(field, value) => {
+                    if (field === 'disconnectDevices') {
+                      handleInputChange('disconnectDevices', value)
+                    } else if (field === 'application' || field === 'fuseType' || field === 'deviceAssociation' || field === 'sdLocation') {
+                      handleInputChange('incomingServiceDisconnect', {
+                        ...formData.incomingServiceDisconnect,
+                        [field]: value
+                      })
+                    } else if (field === 'lineConnection' || field === 'loadConnection' || field === 'protectionFeatures' || field === 'programmer') {
+                      handleInputChange('incomingServiceDisconnect', {
+                        ...formData.incomingServiceDisconnect,
+                        [field]: value
+                      })
+                    }
+                  }}
                 />
               </div>
             )}
