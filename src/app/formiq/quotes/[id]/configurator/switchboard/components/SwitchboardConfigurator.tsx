@@ -9,6 +9,7 @@ import BusSection from './BusSection'
 import EnclosureSpecialsSection from './EnclosureSpecialsSection'
 import UtilityContentSection from './UtilityContentSection'
 import IncomingServiceDisconnectSection from './IncomingServiceDisconnectSection'
+import FeedersSection from './FeedersSection'
 
 interface UtilityItem {
   id: string
@@ -32,6 +33,21 @@ interface DisconnectDevice {
   sensor: string
   hundredPercent: boolean
   operation: string
+}
+
+interface FeederDevice {
+  id: string
+  displayName: string
+  quantity: number
+  deviceType: string
+  construction: string
+  tripAmps: number
+  poles: number
+  frame: string
+  sensor: string
+  hundredPercent: boolean
+  operation: string
+  mounting: string
 }
 
 interface Quote {
@@ -82,7 +98,7 @@ export default function SwitchboardConfigurator({
   components: _components // eslint-disable-line @typescript-eslint/no-unused-vars
 }: SwitchboardConfiguratorProps) {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'lineup' | 'utility' | 'incoming-service-disconnect' | 'configuration'>('lineup')
+  const [activeTab, setActiveTab] = useState<'lineup' | 'utility' | 'incoming-service-disconnect' | 'feeders' | 'configuration'>('lineup')
 
   // Form state for lineup tab - removed MTM Interlock, Hi Leg, cUL
   const [formData, setFormData] = useState({
@@ -187,10 +203,51 @@ export default function SwitchboardConfigurator({
         rgZoneSelectiveInterlock: false,
         type: 'EKIP Touch'
       }
+    },
+    // Feeders form data
+    feederDevices: [] as FeederDevice[],
+    feeders: {
+      fuseType: '',
+      deviceAssociation: '',
+      fedByMain: '',
+      provideLugs: false,
+      loadConnection: {
+        loadType: '',
+        loadWireType: '' as '3-wire' | '4-wire' | '',
+        strapType: '',
+        lugType: '',
+        cableMaterial: '',
+        loadExit: '',
+        cableSize: '',
+        cablesPerPhase: ''
+      },
+      protectionFeatures: {
+        phaseFailure: false,
+        capTrip: false,
+        geItiBgflGfRelay: false,
+        subMeteringRgm4500q: false,
+        multiStack: false,
+        provideFuses: false
+      },
+      programmer: {
+        mode: '' as 'instantaneous' | 'fuse-only' | 'none' | '',
+        longTime: false,
+        shortTime: false,
+        relt: false,
+        groundFault: false,
+        gfAlarm: false,
+        neutralProtection: false,
+        meteringCommunication: false,
+        protectiveRelays: false,
+        rgZoneSelectiveInterlock: false,
+        type: ''
+      },
+      zoneSelectiveInterlock: '' as 'ground-fault-only' | 'ground-fault-instantaneous' | 'short-time-ground-fault' | 'short-time-ground-fault-instantaneous' | 'none' | '',
+      measuringModule: ''
     }
   })
 
-  const handleInputChange = (field: string, value: unknown) => {
+  const handleInputChange = (field: string, value: string | boolean | UtilityItem[] | DisconnectDevice[] | FeederDevice[] | Record<string, unknown> | unknown) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -277,6 +334,16 @@ export default function SwitchboardConfigurator({
               }`}
             >
               Incoming Service Disconnect
+            </button>
+            <button
+              onClick={() => setActiveTab('feeders')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'feeders'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Feeders
             </button>
             <button
               onClick={() => setActiveTab('configuration')}
@@ -405,6 +472,45 @@ export default function SwitchboardConfigurator({
                     } else if (field === 'lineConnection' || field === 'loadConnection' || field === 'protectionFeatures' || field === 'programmer') {
                       handleInputChange('incomingServiceDisconnect', {
                         ...formData.incomingServiceDisconnect,
+                        [field]: value
+                      })
+                    }
+                  }}
+                />
+              </div>
+            )}
+
+            {activeTab === 'feeders' && (
+              <div>
+                <FeedersSection
+                  formData={{
+                    feederDevices: formData.feederDevices,
+                    fuseType: formData.feeders.fuseType,
+                    deviceAssociation: formData.feeders.deviceAssociation,
+                    fedByMain: formData.feeders.fedByMain,
+                    provideLugs: formData.feeders.provideLugs,
+                    loadConnection: formData.feeders.loadConnection,
+                    protectionFeatures: formData.feeders.protectionFeatures,
+                    programmer: formData.feeders.programmer,
+                    zoneSelectiveInterlock: formData.feeders.zoneSelectiveInterlock,
+                    measuringModule: formData.feeders.measuringModule
+                  }}
+                  onInputChange={(field, value) => {
+                    if (field === 'feederDevices') {
+                      handleInputChange('feederDevices', value)
+                    } else if (field === 'fuseType' || field === 'deviceAssociation' || field === 'fedByMain' || field === 'provideLugs') {
+                      handleInputChange('feeders', {
+                        ...formData.feeders,
+                        [field]: value
+                      })
+                    } else if (field === 'loadConnection' || field === 'protectionFeatures' || field === 'programmer') {
+                      handleInputChange('feeders', {
+                        ...formData.feeders,
+                        [field]: value
+                      })
+                    } else if (field === 'zoneSelectiveInterlock' || field === 'measuringModule') {
+                      handleInputChange('feeders', {
+                        ...formData.feeders,
                         [field]: value
                       })
                     }
