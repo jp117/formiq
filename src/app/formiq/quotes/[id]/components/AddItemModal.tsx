@@ -26,69 +26,17 @@ export default function AddItemModal({ isOpen, onClose, quoteId }: AddItemModalP
       route: `/formiq/quotes/${quoteId}/configurator/switchboard`
     },
     {
-      id: 'panel',
-      title: 'Panel',
-      description: 'Design and configure electrical panels',
+      id: 'distributor-items',
+      title: 'Distributor Items',
+      description: 'Add items from distributor catalog',
       icon: (
         <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 1L20 7l-8 4" />
         </svg>
       ),
       color: 'bg-green-100 text-green-800 border-green-200',
       hoverColor: 'hover:bg-green-200',
-      route: `/formiq/quotes/${quoteId}/configurator/panel`
-    },
-    {
-      id: 'components',
-      title: 'Individual Components',
-      description: 'Add specific electrical components',
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-        </svg>
-      ),
-      color: 'bg-purple-100 text-purple-800 border-purple-200',
-      hoverColor: 'hover:bg-purple-200',
-      route: `/formiq/quotes/${quoteId}/configurator/components`
-    },
-    {
-      id: 'assembly',
-      title: 'Pre-Built Assembly',
-      description: 'Add from standard assembly library',
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        </svg>
-      ),
-      color: 'bg-orange-100 text-orange-800 border-orange-200',
-      hoverColor: 'hover:bg-orange-200',
-      route: `/formiq/quotes/${quoteId}/configurator/assembly`
-    },
-    {
-      id: 'import',
-      title: 'Import from File',
-      description: 'Upload CSV or Excel file with components',
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-        </svg>
-      ),
-      color: 'bg-gray-100 text-gray-800 border-gray-200',
-      hoverColor: 'hover:bg-gray-200',
-      route: `/formiq/quotes/${quoteId}/configurator/import`
-    },
-    {
-      id: 'manual',
-      title: 'Manual Entry',
-      description: 'Add line items manually',
-      icon: (
-        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-      ),
-      color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      hoverColor: 'hover:bg-yellow-200',
-      route: `/formiq/quotes/${quoteId}/configurator/manual`
+      route: `/formiq/quotes/${quoteId}/configurator/distributor-items`
     }
   ]
 
