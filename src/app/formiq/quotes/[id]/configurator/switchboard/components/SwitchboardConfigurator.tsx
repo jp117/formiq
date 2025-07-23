@@ -129,7 +129,7 @@ export default function SwitchboardConfigurator({
     requiresServiceDisconnect: false,
     // Utility form data
     utilityItems: [] as UtilityItem[],
-    selectedUtilityType: 'EUSERC' as 'EUSERC' | 'All Others',
+    selectedUtilityType: 'All Others' as 'EUSERC' | 'All Others',
     currentItem: {
       qty: '1',
       name: '',
