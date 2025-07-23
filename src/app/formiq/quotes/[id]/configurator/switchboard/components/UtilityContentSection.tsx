@@ -173,9 +173,10 @@ export default function UtilityContentSection({ formData, onInputChange }: Utili
                   value="EUSERC"
                   checked={formData.selectedUtilityType === 'EUSERC'}
                   onChange={(e) => onInputChange('selectedUtilityType', e.target.value)}
+                  disabled={true}
                   className="mr-2"
                 />
-                <span className="text-sm text-gray-900">EUSERC</span>
+                <span className="text-sm text-gray-400">EUSERC (Disabled - Not available in first release)</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -277,9 +278,10 @@ export default function UtilityContentSection({ formData, onInputChange }: Utili
                   <label className="block text-sm font-medium text-gray-900 mb-2">Feed Type</label>
                   <input
                     type="text"
-                    value={formData.lineConnection.feedType}
+                    value={formData.currentItem.sequence === 'Hot' ? 'Lugs/Cable' : formData.currentItem.sequence === 'Cold' ? 'Bus' : ''}
                     onChange={(e) => onInputChange('lineConnection', { ...formData.lineConnection, feedType: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    disabled={true}
+                    className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-gray-100 cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -290,9 +292,9 @@ export default function UtilityContentSection({ formData, onInputChange }: Utili
                     className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
                   >
                     <option value="">Select Lug Type</option>
-                    <option value="Mechanical Lug">Mechanical Lug</option>
-                    <option value="Compression Lug">Compression Lug</option>
-                    <option value="Bolted Lug">Bolted Lug</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Compression">Compression</option>
+                    <option value="Provision">Provision</option>
                   </select>
                 </div>
                 <div>
@@ -397,9 +399,9 @@ export default function UtilityContentSection({ formData, onInputChange }: Utili
                     className="w-full px-3 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
                   >
                     <option value="">Select Lug Type</option>
-                    <option value="Mechanical Lug">Mechanical Lug</option>
-                    <option value="Compression Lug">Compression Lug</option>
-                    <option value="Bolted Lug">Bolted Lug</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Compression">Compression</option>
+                    <option value="Provision">Provision</option>
                   </select>
                 </div>
               </div>
