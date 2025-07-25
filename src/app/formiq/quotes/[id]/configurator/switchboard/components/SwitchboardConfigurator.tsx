@@ -10,6 +10,8 @@ import EnclosureSpecialsSection from './EnclosureSpecialsSection'
 import UtilityContentSection from './UtilityContentSection'
 import IncomingServiceDisconnectSection from './IncomingServiceDisconnectSection'
 import FeedersSection from './FeedersSection'
+import MeterSPDOptionsSection from './MeterSPDOptionsSection'
+import OptionsSection from './OptionsSection'
 
 interface UtilityItem {
   id: string
@@ -98,7 +100,7 @@ export default function SwitchboardConfigurator({
   components: _components // eslint-disable-line @typescript-eslint/no-unused-vars
 }: SwitchboardConfiguratorProps) {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'lineup' | 'utility' | 'incoming-service-disconnect' | 'feeders' | 'configuration'>('lineup')
+  const [activeTab, setActiveTab] = useState<'lineup' | 'utility' | 'incoming-service-disconnect' | 'feeders' | 'meter-spd' | 'options'>('lineup')
 
   // Form state for lineup tab - removed MTM Interlock, Hi Leg, cUL
   const [formData, setFormData] = useState({
@@ -244,6 +246,79 @@ export default function SwitchboardConfigurator({
       },
       zoneSelectiveInterlock: '' as 'ground-fault-only' | 'ground-fault-instantaneous' | 'short-time-ground-fault' | 'short-time-ground-fault-instantaneous' | 'none' | '',
       measuringModule: ''
+    },
+    // Meter & SPD Options form data
+    brekerCommunications: {
+      ethernetGateway: false,
+      rtuToEthernet: false
+    },
+    meterMonitoring: [{
+      meterType: 'None',
+      spdType: 'None',
+      ammeterAndSwitch: false,
+      voltmeterAndSwitch: false
+    }],
+    customerInstrumentation: {
+      meterType: 'None',
+      quantity: 0,
+      ammeterAndSwitch: false,
+      voltmeterAndSwitch: false,
+      potentialTransformer: false,
+      neutralCT: false,
+      wattmeter: false
+    },
+    surgeProtectiveDevice: {
+      spdType: 'None',
+      certification: '' as 'type1' | 'type2' | '',
+      quantity: 0,
+      mounting: '' as 'individually' | 'group' | '',
+      indicatingLight: false,
+      alarm: false,
+      formCContacts: false,
+      surgeCounter: false
+    },
+    // Options form data
+    generalOptions: {
+      dripResistanceRoof: false,
+      portableTripUnitTestKit: false,
+      neutralsAndGroundFollowsFeederLoadExit: false,
+      fullHeightRearHingeDoor: false,
+      hingedWireGutterCover: false,
+      doNotIntermixMainAndUtility: false,
+      seismicRating: false,
+      fullHeightSectionBarriers: false,
+      liftingBracket: false,
+      doNotIntermixMainAndPanel: false,
+      e9000MCCTransition: false,
+      avTransition: false,
+      fullHeightVerticalBusForDistributionSection: false,
+      lightningArrestor: false,
+      surgeCapacitor: false,
+      doNotStackTransformers: false,
+      twoSidedPanel: false,
+      floorPlates: false,
+      floorSill: false,
+      changeCopperBusPlatingToTIN: false,
+      enableLegacyProducts: false,
+      certifiedTestReport: false,
+      fullyRatedPanelBus: false
+    },
+    mimicBus: 'None',
+    shippingBreak: '' as 'each-section' | 'two-sections' | '',
+    drawoutLiftingOptions: '' as 'floor-crane' | 'stationary-hoist' | 'moveable-hoist' | 'none' | '',
+    sectionHeater: {
+      enabled: false,
+      thermostat: false,
+      controlPowerForSectionHeat: false,
+      humidistat: false
+    },
+    firePumpTap: {
+      enabled: false,
+      lugType: '',
+      cableMaterial: '',
+      cableSize: '',
+      amps: '',
+      lugQtyPerPhase: ''
     }
   })
 
@@ -346,14 +421,24 @@ export default function SwitchboardConfigurator({
               Feeders
             </button>
             <button
-              onClick={() => setActiveTab('configuration')}
+              onClick={() => setActiveTab('meter-spd')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'configuration'
+                activeTab === 'meter-spd'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Configuration
+              Meter Monitoring
+            </button>
+            <button
+              onClick={() => setActiveTab('options')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'options'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Options
             </button>
           </nav>
         </div>
@@ -518,11 +603,34 @@ export default function SwitchboardConfigurator({
                 />
               </div>
             )}
-            
-            {activeTab === 'configuration' && (
+
+            {activeTab === 'meter-spd' && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">Configuration</h2>
-                <p className="text-gray-500">Configuration content will go here...</p>
+                <MeterSPDOptionsSection
+                  formData={{
+                    brekerCommunications: formData.brekerCommunications,
+                    meterMonitoring: formData.meterMonitoring,
+                    customerInstrumentation: formData.customerInstrumentation,
+                    surgeProtectiveDevice: formData.surgeProtectiveDevice
+                  }}
+                  onInputChange={handleInputChange}
+                />
+              </div>
+            )}
+
+            {activeTab === 'options' && (
+              <div>
+                <OptionsSection
+                  formData={{
+                    generalOptions: formData.generalOptions,
+                    mimicBus: formData.mimicBus,
+                    shippingBreak: formData.shippingBreak,
+                    drawoutLiftingOptions: formData.drawoutLiftingOptions,
+                    sectionHeater: formData.sectionHeater,
+                    firePumpTap: formData.firePumpTap
+                  }}
+                  onInputChange={handleInputChange}
+                />
               </div>
             )}
           </div>
